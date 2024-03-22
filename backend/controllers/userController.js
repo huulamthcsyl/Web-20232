@@ -1,5 +1,4 @@
 import firebase from '../firebase.js';
-import Product from '../models/userModel.js';
 import User from '../models/userModel.js'
 import bcrypt from 'bcrypt'
 import db from '../firebase.js'
@@ -14,75 +13,67 @@ import {
   query,
   where
 } from 'firebase/firestore';
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword  
+} from "firebase/auth";
 
-
+// POST /register
 export const register = async (req, res, next) => {
-  try {
-    const user = {
-      email: req.body.email,
-      password: req.body.password
-    };
-    const userCollection = collection(db, 'users');
-    const q = query(userCollection, where('email', '==', req.body.email));
-    const data = await getDocs(q);
-    if (data.empty) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(user.password, salt);
-      await addDoc(collection(db, 'users'), user);
+  const auth = getAuth();
+  const email = req.body.email;
+  const password = req.body.password;
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(() => {
       res.status(200).json({
         status: true,
         message: "signup successfully"
-      });
-    }
-    else {
-      res.status(200).json({
-        status: false,
-        message: "email existed"
-      });
-    }
-  } catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.message
-    });
-  }
-};
-
-export const login = async (req, res, next) => {
-  try {
-    const userCollection = collection(db, 'users');
-    const q = query(userCollection, where('email', '==', req.body.email));
-    const data = await getDocs(q);
-    if (data.empty) {
-      res.status(200).json({
-        status: false,
-        message: "email does not exist"
-      });
-    }
-    else {
-      let user;
-      data.forEach((doc) => {
-        user = doc.data();
-      });
-      const validPassword = await bcrypt.compare(req.body.password, user.password);
-      if (validPassword) {
-        res.status(200).json({
-          status: true,
-          message: "login successfully"
-        });
-      }
-      else {
+      })
+    })
+    .catch((error) => {
+      if (error.code == 'auth/email-already-in-use') {
         res.status(200).json({
           status: false,
-          message: "wrong password"
-        });
+          message: "email already in use"
+        })
       }
-    }
-  }
-  catch (error) {
-    res.status(400).json({
-      status: false,
-      message: error.message
+      else {
+        res.status(400).json({
+          status: false,
+          message: error.message
+        })
+      }
     });
-  }
-};
+}
+
+// GET /login
+export const login = async (req, res, next) => {
+  const auth = getAuth();
+  const email = req.body.email;
+  const password = req.body.password;
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      res.status(200).json({
+        status: true,
+        userId: userCredential.user.uid,
+        message: "login successfully"
+      })
+    })
+    .catch((error) => {
+      if (error.code == 'auth/invalid-credential') {
+        res.status(200).json({
+          status: false,
+          userId: null,
+          message: "wrong password"
+        })
+      }
+      else {
+        res.status(400).json({
+          status: false,
+          userId: null,
+          message: error.message
+        })
+      }
+    });
+}
