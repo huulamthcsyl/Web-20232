@@ -8,3 +8,10 @@ export function register(email, password) {
         password: password
     })
 }
+
+export function login(email, password) {
+    return axios.post(`${API_BASE_URL}/login`, {
+        email: email,
+        password: password
+    })
+}

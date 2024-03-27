@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Container, Form, FormGroup, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { register } from './services/API';
-
+import { toast } from 'react-toastify';
 
 export default function SignUp() {
 
@@ -23,10 +23,10 @@ export default function SignUp() {
       .then(res => {
         if (res.status === 200) {
           if (res.data.status) {
-            alert("Đăng ký thành công");
+            toast.success(res.data.message)
           }
           else {
-            setErrorMessage(res.data.message);
+            toast.error(res.data.message);
           }
         }
         else {

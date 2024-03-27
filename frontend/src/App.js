@@ -5,6 +5,8 @@ import Login from "./Login";
 import Home from "./Home";
 import Layout from "./Layout";
 import Profile from "./Profile";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
           <Route path="profile" element={<Profile />}/>
         </Route>
       </Routes>
+      <ToastContainer hideProgressBar />
     </BrowserRouter>
   );
 }

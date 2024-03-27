@@ -50,8 +50,10 @@ export const register = async (req, res, next) => {
 // GET /login
 export const login = async (req, res, next) => {
   const auth = getAuth();
+  console.log(req.body)
   const email = req.body.email;
   const password = req.body.password;
+  console.log(email, password)
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       res.status(200).json({
