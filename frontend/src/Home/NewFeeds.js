@@ -7,10 +7,12 @@ function CreatePost() {
   const [selectedImage, setSelectedImage] = useState([])
   const [selectedImageURL, setSelectedImageURL] = useState([]);
 
+  // Handle selected image
   const onImageSelected = (e) => {
     setSelectedImage([...selectedImage, ...e.target.files])
   }
 
+  // Create URL for selected image
   useEffect(() => {
     if(selectedImage.length < 1) return;
     const newImageUrls = [];
