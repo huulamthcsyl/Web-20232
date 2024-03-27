@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignUp from "./SignUp";
 import Login from "./Login";
-import Home from "./Home";
+import Home from "./Home/Home";
 import Layout from "./Layout";
 import Profile from "./Profile";
 import 'react-toastify/dist/ReactToastify.css';
