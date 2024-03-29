@@ -46,7 +46,7 @@ function CreatePost() {
 
 export default function NewFeeds() {
   return (
-    <Container>
+    <Container className='w-75'>
       <CreatePost />
     </Container>
   )
