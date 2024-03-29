@@ -7,6 +7,7 @@ import Layout from "./Layout";
 import Profile from "./Profile";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
+import PrivateRoute from "./PrivateRoute";
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
       <Routes>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Layout />}>
+        // Redirect to login page if user is not logged in
+        <Route path="/" element={<PrivateRoute />}>
           <Route index element={<Home />} />
           <Route path="profile" element={<Profile />}/>
         </Route>

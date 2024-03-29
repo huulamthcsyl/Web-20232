@@ -56,7 +56,6 @@ export const login = async (req, res, next) => {
   console.log(req.body)
   const email = req.body.email;
   const password = req.body.password;
-  console.log(email, password)
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       res.status(200).json({
