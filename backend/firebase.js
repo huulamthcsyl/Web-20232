@@ -9,9 +9,10 @@ import {
     updateDoc,
     deleteDoc,
 } from 'firebase/firestore';
+import { getDatabase } from "firebase/database";
 import config from './config.js';
 
 const firebase = initializeApp(config.firebaseConfig);
-const db = getFirestore(firebase);
+const db = getDatabase(firebase);
 
 export default db;
