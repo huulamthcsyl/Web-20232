@@ -1,5 +1,4 @@
-import {collection, addDoc} from "firebase/firestore";
-
+import { collection, addDoc } from "firebase/firestore";
 import db from '../firebase.js'
 
 export const createPost = async (req, res, next) => {
