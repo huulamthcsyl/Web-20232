@@ -1,6 +1,5 @@
 import { collection, addDoc } from "firebase/firestore";
-
-const db = require("firebase.js")
+import db from '../firebase.js'
 
 export const createPost = async (req, res, next) => {
     const body = req.body.body
