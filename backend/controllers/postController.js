@@ -7,15 +7,20 @@ export const createPost = async (req, res, next) => {
     const video = req.body.video
     const userId = req.body.userId
 
-    try {
-        const docRef = await addDoc(collection(db, "posts"), {
-            body: body,
-            image: image,
-            video: video,
-            userId: userId
-        });
-        console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-        console.error("Error adding document: ", e);
-    }
+    await addDoc(collection(db, "posts"), {
+        body: body,
+        image: image,
+        video: video,
+        userId: userId
+    }).then(() => {
+        res.status(200).json({
+            status: true,
+            message: "Tạo bài đăng thành công."
+        })
+    }).catch((error) => {
+        res.status(400).json({
+            status: false,
+            message: error.message
+        })
+    })
 }
