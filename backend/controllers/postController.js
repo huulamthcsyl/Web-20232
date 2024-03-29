@@ -1,4 +1,4 @@
-import { getDatabase, ref, set } from "firebase/database";
+import { collection, addDoc } from "firebase/firestore";
 
 const db = require("firebase.js")
 
@@ -8,10 +8,15 @@ export const createPost = async (req, res, next) => {
     const video = req.body.video
     const userId = req.body.userId
 
-    await set(ref(db, "users/" + userId), {
-        body: body,
-        image: image,
-        video: video,
-        userId: userId
-    })
+    try {
+        const docRef = await addDoc(collection(db, "posts"), {
+            body: body,
+            image: image,
+            video: video,
+            userId: userId
+        });
+        console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
 }
