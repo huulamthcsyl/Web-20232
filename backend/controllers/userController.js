@@ -105,67 +105,69 @@ export const updateProfile = async (req, res) => {
   const docRef = doc(db, "profiles", req.params.idUser);
   const docSnap = await getDoc(docRef);
   const storage = getStorage();
-  const cover = req.file;
-  const storageRef = ref(storage, `covers/${req.params.idUser}`);
-  const metadata = {
-    contentType: req.file.mimetype,
-  };
-  uploadBytes(storageRef, req.file.buffer, metadata)
+  const cover_storageRef = ref(storage, `covers/${req.params.idUser}`);
+  const avatar_storageRef = ref(storage, `avatars/${req.params.idUser}`);
+  const coverImageFile = (req.files['cover']) ? req.files['cover'][0] : null;
+  const avatarImageFile = (req.files['avatar']) ? req.files['avatar'][0] : null;
+  // Tạo đối tượng chứa dữ liệu để truyền đi
+  const params = ['firstName', 'lastName', 'DOB', 'address', 'gender', 'school', 'work'];
+  let user = {};
+  params.forEach((param) => {
+    if (param in req.body) user[param] = req.body[param];
+  });
+  // Hàm cập nhật firestore database
+  const updateFirestore = function () {
+    if (docSnap.exists()) {
+      updateDoc(doc(db, "profiles", req.params.idUser), user)
+      .then(() => {
+        res.status(200).json({
+          status: true,
+          message: "Cập nhật thành công"
+        })
+      })
+      .catch((error) => {
+        res.status(400).json({
+          status: false,
+          message: error.message
+        })
+      });
+    } 
+    else {
+      setDoc(doc(db, "profiles", req.params.idUser), user)
+      .then(() => {
+        res.status(200).json({
+          status: true,
+          message: "Cập nhật thành công"
+        })
+      })
+      .catch((error) => {
+        res.status(400).json({
+          status: false,
+          message: error.message
+        })
+      })
+    }
+  }
+  // Nếu có avatar / cover được tải lên
+  let avatarCheck = (avatarImageFile) ? true : false, coverCheck = (coverImageFile) ? true : false;
+  Promise.all([
+    (coverCheck) ? uploadBytes(cover_storageRef, coverImageFile.buffer, {
+      contentType: coverImageFile.mimetype
+    }) : null, 
+    (avatarCheck) ? uploadBytes(avatar_storageRef, avatarImageFile.buffer, {
+      contentType: avatarImageFile.mimetype
+    }) : null
+  ])
     .then(async (snapshot) => {
-      let coverUrl = await getDownloadURL(storageRef);
-      if (docSnap.exists()) {
-        updateDoc(doc(db, "profiles", req.params.idUser), {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          DOB: req.body.DOB,
-          address: req.body.address,
-          gender: req.body.gender,
-          school: req.body.school,
-          cover: coverUrl,
-          work: req.body.work,
-        })
-        .then(() => {
-          res.status(200).json({
-            status: true,
-            message: "Cập nhật thành công"
-          })
-        })
-        .catch((error) => {
-          res.status(400).json({
-            status: false,
-            message: error.message
-          })
-        });
-      } 
-      else {
-        setDoc(doc(db, "profiles", req.params.idUser), {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          DOB: req.body.DOB,
-          address: req.body.address,
-          gender: req.body.gender,
-          school: req.body.school,
-          cover: coverUrl,
-          work: req.body.work,
-        })
-        .then(() => {
-          res.status(200).json({
-            status: true,
-            message: "Cập nhật thành công"
-          })
-        })
-        .catch((error) => {
-          res.status(400).json({
-            status: false,
-            message: error.message
-          })
-        })
-      }
+      if (avatarCheck) user.avatar = await getDownloadURL(cover_storageRef);
+      if (coverCheck) user.cover = await getDownloadURL(avatar_storageRef);
+      if (avatarCheck || coverCheck) updateFirestore();
     })
     .catch((error) => {
       res.status(400).json({
         status: false,
         message: error.message
       })
-    })
+    });
+    if (!avatarCheck && !coverCheck) updateFirestore();
 }

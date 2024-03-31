@@ -14,6 +14,9 @@ const upload = multer();
 router.post('/register', upload.none(), register);
 router.post('/login', upload.none(), login);
 router.post('/logout', upload.none(), logout);
-router.post('/updateProfile/:idUser', upload.single('cover'), updateProfile);
+router.post('/updateProfile/:idUser', upload.fields([
+  { name: 'cover', maxCount: 1 },
+  { name: 'avatar', maxCount: 1 }
+  ]), updateProfile);
 
 export default router;
