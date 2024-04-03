@@ -53,7 +53,6 @@ export const register = async (req, res, next) => {
 // POST /login
 export const login = async (req, res, next) => {
   const auth = getAuth();
-  console.log(req.body)
   const email = req.body.email;
   const password = req.body.password;
   signInWithEmailAndPassword(auth, email, password)

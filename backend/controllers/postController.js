@@ -7,6 +7,7 @@ export const createPost = async (req, res, next) => {
     const video = req.body.video
     const userId = req.body.userId
 
+    // form-data
     await addDoc(collection(db, "posts"), {
         body: body,
         image: image,
