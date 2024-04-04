@@ -6,6 +6,10 @@ import friends from '../assets/icons/friends.png'
 import user from '../assets/icons/user.png'
 import { useNavigate } from 'react-router-dom'
 
+/**
+ * Represents the navigation bar component.
+ * @returns {JSX.Element} The JSX element representing the navigation bar.
+ */
 export default function NavBar() {
 
   const navigate = useNavigate()

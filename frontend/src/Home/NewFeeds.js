@@ -26,7 +26,7 @@ function CreatePost() {
     <Form onSubmit={handleCreatePost}>
       <textarea className="form-control" placeholder="Bạn đang nghĩ gì" style={{ height: "100px", border: 0 }} />
       {selectedImage.length > 0 && 
-        <Container>
+        <Container className='d-inline-flex justify-content-start p-2' style={{overflowX: 'auto'}}>
           {selectedImage && selectedImage.map((img, index) => (
             <PreviewImage key={index} imageSrc={img} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
           ))
