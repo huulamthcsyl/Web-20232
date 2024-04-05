@@ -3,6 +3,7 @@ import { Container, Form, Button,Image } from 'react-bootstrap'
 import image from '../assets/icons/image.png'
 import video from '../assets/icons/video.png'
 import { PreviewImage } from '../components/PreviewImage';
+import Post from '../components/Post';
 
 function CreatePost() {
 
@@ -23,7 +24,7 @@ function CreatePost() {
   }
 
   return (
-    <Form onSubmit={handleCreatePost}>
+    <Form className='mb-4 border' onSubmit={handleCreatePost}>
       <textarea className="form-control" placeholder="Bạn đang nghĩ gì" style={{ height: "100px", border: 0 }} />
       {selectedImage.length > 0 && 
         <Container className='d-inline-flex justify-content-start p-2' style={{overflowX: 'auto'}}>
@@ -64,6 +65,7 @@ export default function NewFeeds() {
   return (
     <Container className='w-75'>
       <CreatePost />
+      <Post />
     </Container>
   )
 }
