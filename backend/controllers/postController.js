@@ -1,9 +1,9 @@
-import { collection, addDoc } from "firebase/firestore"
+import {collection, addDoc, getDocs} from "firebase/firestore"
 import { getStorage, ref, uploadBytes } from "firebase/storage"
 
 import db from '../firebase.js'
 
-export const createPost = async (req, res, next) => {
+const createPost = async (req, res) => {
     const body = req.body.body
     const imageFile = req.files["image"] ? req.files["image"][0] : null
     const videoFile = req.file["video"] ? req.files["video"][0] : null
@@ -38,4 +38,43 @@ export const createPost = async (req, res, next) => {
             message: error.message
         })
     })
+}
+
+const getPost = async (req, res) => {
+    const userId = req.body.userId
+    let posts = []
+    let querySnapshot
+
+    if (userId) {
+        querySnapshot = await db.collection("path")
+            .where("userId", "==", userId)
+            .get()
+    } else {
+        querySnapshot = await db.collection("path")
+            .get()
+    }
+
+    if (querySnapshot.empty) {
+        res.status(402).json({
+            message: "No post found!"
+        })
+    }
+
+    if (userId) {
+        res.status(200).json({
+            message: "Found posts from user id " + userId,
+            userId: userId,
+            data: querySnapshot.docs
+        })
+    } else {
+        res.status(200).json({
+            message: "Found all posts",
+            data: querySnapshot.docs
+        })
+    }
+}
+
+module.exports = {
+    createPost,
+    getPost
 }
