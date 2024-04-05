@@ -1,6 +1,7 @@
+import Fuse from 'fuse.js'
 import firebase from '../firebase.js';
 import User from '../models/userModel.js'
-import bcrypt from 'bcrypt'
+import Profile from '../models/profileModel.js';
 import db from '../firebase.js'
 import {
   collection,
@@ -169,4 +170,48 @@ export const updateProfile = async (req, res) => {
       })
     });
     if (!avatarCheck && !coverCheck) updateFirestore();
+}
+
+// GET /findUser?name=...
+export const findUser = async (req, res) => {
+  // tạo dữ liệu cho việc tìm kiếm
+  let profiles = [];
+  const options = {
+    keys: ['firstName', 'lastName'],
+    threshold: 0.5
+  };
+  // lấy dữ liệu từ database
+  const querySnapshot = await getDocs(collection(db, "profiles"));
+  querySnapshot.forEach((doc) => {
+    profiles.push(new Profile(doc));
+  });
+  const fuse = new Fuse(profiles, options);
+  let result = fuse.search(req.query.name);
+  result = result.map((obj) => obj.item);
+
+  res.status(200).json({
+    users: result
+  });
+}
+
+// POST /createFriendRequest
+export const createFriendRequest = async (req, res) => {
+  const friendRequest = {
+    userId: req.body.userId,
+    friendId: req.body.friendId,
+    status: false
+  };
+  addDoc(collection(db, "friendRequests"), friendRequest)
+    .then(() => {
+      res.status(200).json({
+        status: true,
+        message: 'Gửi lời mời kết bạn thành công'
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        status: false,
+        message: error.message
+      });
+    })
 }
