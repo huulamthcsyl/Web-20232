@@ -1,5 +1,5 @@
-import {collection, addDoc, getDocs} from "firebase/firestore"
-import { getStorage, ref, uploadBytes, listAll } from "firebase/storage"
+import {addDoc, collection} from "firebase/firestore"
+import {getStorage, ref, uploadBytes} from "firebase/storage"
 
 import db from '../firebase.js'
 
@@ -79,17 +79,27 @@ const getPostByUserId = async (req, res) => {
 }
 
 const getAllPost = async (req, res) => {
-    const storage = getStorage();
+    let posts = []
+    let querySnapshot
 
-    const postRef = ref(storage, 'posts');
-    listAll(postRef)
-        .then((res) => {
-            res.items.forEach((itemRef) => {
-                listAll(itemRef);
-            });
-        }).catch((error) => {
-            console.log(error.toString())
-    });
+    if (userId) {
+        querySnapshot = await db.collection("posts")
+            .where("userId", "==", userId)
+            .get()
+    } else {
+        querySnapshot = await db.collection("posts")
+            .get()
+    }
+
+    if (querySnapshot.empty) {
+        res.status(402).json({
+            message: "No post found!"
+        })
+    }
+    res.status(200).json({
+        message: "Found all posts",
+        data: querySnapshot.docs
+    })
 }
 
 module.exports = {
