@@ -5,21 +5,25 @@ import db from '../firebase.js'
 
 const createPost = async (req, res) => {
     const body = req.body.body
-    const imageFile = req.files["image"] ? req.files["image"][0] : null
-    const videoFile = req.file["video"] ? req.files["video"][0] : null
+    const imageFile = req.files["image"] ? req.files["image"] : null
+    const videoFile = req.file["video"] ? req.files["video"] : null
     const userId = req.body.userId
 
     const storage = getStorage();
     const imageStorageRef = ref(storage, '/postImage')
     const videoStorageRef = ref(storage, '/postVideo')
 
-    uploadBytes(imageStorageRef, imageFile).then((snapshot) => {
-        console.log('Uploaded a blob or file image!')
-    })
+    for (let i = 0; i < imageFile.length; i++) {
+        uploadBytes(imageStorageRef, imageFile[i]).then((snapshot) => {
+            console.log('Uploaded a blob or file image!')
+        })
+    }
 
-    uploadBytes(videoStorageRef, videoFile).then((snapshot) => {
-        console.log('Uploaded a blob or file video!')
-    })
+    for (let i = 0; i < videoFile.length; i++) {
+        uploadBytes(videoStorageRef, videoFile[i]).then((snapshot) => {
+            console.log('Uploaded a blob or file image!')
+        })
+    }
 
     // form-data
     await addDoc(collection(db, "posts"), {
