@@ -1,5 +1,5 @@
-import {addDoc, collection, getDocs} from "firebase/firestore"
-import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage"
+import { addDoc, collection, getDocs } from "firebase/firestore"
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import Randomstring from "randomstring"
 
 import db from '../firebase.js'
@@ -18,32 +18,36 @@ export const createPost = async (req, res) => {
     if (imageFile) {
         for (let i = 0; i < imageFile.length; i++) {
             const imageStorageRef = ref(storage, `/postImage/${userId}/${Randomstring.generate()}+${imageFile[i].originalname}`)
-            promises.push(uploadBytes(imageStorageRef, imageFile[i].buffer, {contentType: imageFile[i].mimetype}).then(async (snapshot) => {
+            promises.push(uploadBytes(imageStorageRef, imageFile[i].buffer, { contentType: imageFile[i].mimetype }).then(async (snapshot) => {
                 imageStorageURL.push(await getDownloadURL(imageStorageRef))
             }))
         }
     }
 
-    if (videoFile){
+    if (videoFile) {
         const videoStorageRef = ref(storage, `/postVideo/${userId}/${Randomstring.generate()}+${videoFile[0].originalname}`)
-        promises.push(uploadBytes(videoStorageRef, videoFile[0].buffer, {contentType: videoFile[0].mimetype}).then(async (snapshot) => {
+        promises.push(uploadBytes(videoStorageRef, videoFile[0].buffer, { contentType: videoFile[0].mimetype }).then(async (snapshot) => {
             videoStorageURL = await getDownloadURL(videoStorageRef)
         }))
     }
     // Sau khi tất cả các promise đã được resolve thì thực hiện thêm dữ liệu vào firestore
     Promise.all(promises).then(() => {
-        const post = {
+        // form-data
+        addDoc(collection(db, "posts"), {
             body: body,
             image: imageStorageURL,
             video: videoStorageURL,
             userId: userId
-        }
-        // form-data
-        addDoc(collection(db, "posts"), { post }).then(() => {
+        }).then(() => {
             res.status(200).json({
                 status: true,
                 message: "Tạo bài đăng thành công.",
-                post: post
+                post: {
+                    body: body,
+                    image: imageStorageURL,
+                    video: videoStorageURL,
+                    userId: userId
+                }
             })
         }).catch((error) => {
             res.status(400).json({

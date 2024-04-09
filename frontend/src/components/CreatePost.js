@@ -35,7 +35,6 @@ export function CreatePost({ posts, setPosts }) {
     formData.append('userId', localStorage.getItem('userId'));
     createPost(formData)
       .then(data => {
-        console.log(data.data)
         toast.success(data.data.message);
         setPosts([data.data.post, ...posts]);
         // Khởi tạo lại giá trị cho các state
