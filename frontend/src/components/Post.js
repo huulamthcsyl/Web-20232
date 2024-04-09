@@ -4,9 +4,9 @@ import heart from '../assets/icons/heart.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
 
-export default function Post() {
+export default function Post({ post }) {
   return (
-    <Card>
+    <Card className='mb-2'>
       <Card.Header>
         <Container className='d-flex justify-content-between'>
           <Col className='d-flex'>
@@ -20,9 +20,14 @@ export default function Post() {
       </Card.Header>
       <Card.Body>
         <Card.Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec odio vitae nisl
-          tincidunt aliquam. Sed nec odio nec nunc ultricies tincidunt. Sed nec odio nec nunc
+          {post.body}
         </Card.Text>
+        <Container className='d-flex justify-content-start mb-2 p-0'>
+          {post.image && post.image.map((image, index) => (
+            <Image key={index} src={image} style={{ maxWidth: '200px', maxHeight: '400px' }} className='me-3 border' />
+          ))}
+        </Container>
+        {post.video && <video className='border' src={post.video} controls width="100%" />}
       </Card.Body>
       <Card.Footer>
         <Container className='d-flex justify-content-between'>

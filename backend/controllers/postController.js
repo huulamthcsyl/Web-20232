@@ -1,4 +1,4 @@
-import {addDoc, collection} from "firebase/firestore"
+import {addDoc, collection, getDocs} from "firebase/firestore"
 import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage"
 import Randomstring from "randomstring"
 
@@ -30,19 +30,20 @@ export const createPost = async (req, res) => {
             videoStorageURL = await getDownloadURL(videoStorageRef)
         }))
     }
-
     // Sau khi tất cả các promise đã được resolve thì thực hiện thêm dữ liệu vào firestore
     Promise.all(promises).then(() => {
-        // form-data
-        addDoc(collection(db, "posts"), {
+        const post = {
             body: body,
             image: imageStorageURL,
             video: videoStorageURL,
             userId: userId
-        }).then(() => {
+        }
+        // form-data
+        addDoc(collection(db, "posts"), { post }).then(() => {
             res.status(200).json({
                 status: true,
-                message: "Tạo bài đăng thành công."
+                message: "Tạo bài đăng thành công.",
+                post: post
             })
         }).catch((error) => {
             res.status(400).json({
@@ -88,17 +89,11 @@ export const getPostByUserId = async (req, res) => {
 }
 
 export const getAllPost = async (req, res) => {
-    let posts = []
-    let querySnapshot
-
-    if (userId) {
-        querySnapshot = await db.collection("posts")
-            .where("userId", "==", userId)
-            .get()
-    } else {
-        querySnapshot = await db.collection("posts")
-            .get()
-    }
+    let post = []
+    const querySnapshot = await getDocs(collection(db, "posts"))
+    querySnapshot.forEach((doc) => {
+        post.push(doc.data())
+    })
 
     if (querySnapshot.empty) {
         res.status(402).json({
@@ -107,6 +102,6 @@ export const getAllPost = async (req, res) => {
     }
     res.status(200).json({
         message: "Found all posts",
-        data: querySnapshot.docs
+        data: post
     })
 }

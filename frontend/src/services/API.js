@@ -16,3 +16,11 @@ export function login(email, password) {
         password: password
     })
 }
+
+export function createPost(data) {
+    return axios.post(`${API_BASE_URL}/createPost`, data)
+}
+
+export function getAllPost() {
+    return axios.get(`${API_BASE_URL}/getAllPost`)
+}
