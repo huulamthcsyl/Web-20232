@@ -176,8 +176,8 @@ export const updateProfile = async (req, res) => {
     }) : null
   ])
     .then(async (snapshot) => {
-      if (avatarCheck) user.avatar = await getDownloadURL(cover_storageRef);
-      if (coverCheck) user.cover = await getDownloadURL(avatar_storageRef);
+      if (avatarCheck) user.avatar = await getDownloadURL(avatar_storageRef);
+      if (coverCheck) user.cover = await getDownloadURL(cover_storageRef);
       if (avatarCheck || coverCheck) updateFirestore();
     })
     .catch((error) => {
