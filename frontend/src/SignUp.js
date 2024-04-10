@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Container, Form, FormGroup, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { register } from './services/API';
 import { toast } from 'react-toastify';
 
@@ -10,6 +10,7 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,6 +25,7 @@ export default function SignUp() {
         if (res.status === 200) {
           if (res.data.status) {
             toast.success(res.data.message)
+            navigate('/setup-account', {state: {user: res.data.user}})
           }
           else {
             toast.error(res.data.message);

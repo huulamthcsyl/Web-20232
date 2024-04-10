@@ -29,9 +29,11 @@ export const register = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
+    .then((userCredential) => {
+      const user = userCredential.user;
       res.status(200).json({
         status: true,
+        user: user,
         message: "Đăng ký thành công"
       })
     })
