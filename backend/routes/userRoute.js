@@ -7,7 +7,9 @@ import {
   updateProfile,
   findUser,
   createFriendRequest,
-  getUserProfileById
+  getUserProfileById,
+  acceptFriendRequest,
+  getFriendList
 } from '../controllers/userController.js';
 import multer from 'multer';
 
@@ -24,5 +26,7 @@ router.post('/updateProfile/:idUser', upload.fields([
   ]), updateProfile);
 router.get('/findUser', upload.none(), findUser);
 router.post('/createFriendRequest', upload.none(), createFriendRequest);
+router.post('/acceptFriendRequest', upload.none(), acceptFriendRequest);
+router.get('/getFriendList/:userId', upload.none(), getFriendList);
 
 export default router;

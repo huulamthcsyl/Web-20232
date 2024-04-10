@@ -1,8 +1,6 @@
-import Fuse from 'fuse.js'
-import firebase from '../firebase.js';
-import User from '../models/userModel.js'
+import Fuse from 'fuse.js';
 import Profile from '../models/profileModel.js';
-import db from '../firebase.js'
+import db from '../firebase.js';
 import {
   collection,
   doc,
@@ -29,11 +27,14 @@ export const register = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      res.status(200).json({
-        status: true,
-        message: "Đăng ký thành công"
-      })
+    .then((userCredential) => {
+      setDoc(doc(db, "profiles", userCredential.user.uid), {})
+        .then(() => {
+          res.status(200).json({
+            status: true,
+            message: "Đăng ký thành công"
+          })
+        })
     })
     .catch((error) => {
       if (error.code == 'auth/email-already-in-use') {
@@ -125,7 +126,7 @@ export const updateProfile = async (req, res) => {
   const coverImageFile = (req.files['cover']) ? req.files['cover'][0] : null;
   const avatarImageFile = (req.files['avatar']) ? req.files['avatar'][0] : null;
   // Tạo đối tượng chứa dữ liệu để truyền đi
-  const params = ['firstName', 'lastName', 'DOB', 'address', 'gender', 'school', 'work'];
+  const params = ['firstName', 'lastName', 'DOB', 'address', 'gender', 'school', 'work', 'description'];
   let user = {};
   params.forEach((param) => {
     if (param in req.body) user[param] = req.body[param];
@@ -216,7 +217,8 @@ export const createFriendRequest = async (req, res) => {
     friendId: req.body.friendId,
     status: false
   };
-  addDoc(collection(db, "friendRequests"), friendRequest)
+  let id = friendRequest.userId + "-" + friendRequest.friendId;
+  setDoc(doc(db, "friendRequests", id), friendRequest)
     .then(() => {
       res.status(200).json({
         status: true,
@@ -229,4 +231,85 @@ export const createFriendRequest = async (req, res) => {
         message: error.message
       });
     })
+}
+
+// POST /acceptFriendRequest
+export const acceptFriendRequest = async (req, res) => {
+  try {
+    // cập nhật userId vào bạn bè của friendId
+    const friendDocument = doc(db, "profiles", req.body.friendId);
+    const friend = await getDoc(friendDocument);
+    if (friend.data().friendList) {
+      let tmp = friend.data().friendList;
+      tmp.push(req.body.userId);
+      await updateDoc(friendDocument, { friendList: tmp });
+    }
+    else {
+      let tmp = [req.body.userId];
+      await updateDoc(friendDocument, { friendList: tmp });
+    }
+    // cập nhật friendId vào bạn bè của userId
+    const userDocument = doc(db, "profiles", req.body.userId);
+    const user = await getDoc(userDocument);
+    if (user.data().friendList) {
+      let tmp = user.data().friendList;
+      tmp.push(req.body.friendId);
+      await updateDoc(userDocument, { friendList: tmp });
+    }
+    else {
+      let tmp = [req.body.friendId];
+      await updateDoc(userDocument, { friendList: tmp });
+    }
+    // cập nhật trạng thái của lời mời kết bạn thành đã chấp nhận
+    let id = req.body.friendId + "-" + req.body.userId;
+    updateDoc(doc(db, "friendRequests", id), {status: true});
+    // 
+    res.status(200).json({
+      status: true,
+      message: 'Chấp nhận lời mời kết bạn thành công'
+    });
+  }
+  catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
+  }
+}
+
+// GET /getFriendList/:userId
+export const getFriendList = async (req, res) => {
+  try {
+    const userDocument = doc(db, "profiles", req.params.userId);
+    const user = await getDoc(userDocument);
+    var profileList = [];
+    if (user.data().friendList) {
+      let friendList = user.data().friendList;
+      let friendPromises = friendList.map((friendId) => {
+        return getDoc(doc(db, "profiles", friendId));
+      });
+      let friendSnapshots = await Promise.all(friendPromises);
+      friendSnapshots.forEach((snap) => {
+        let friendProfile = new Profile(snap);
+        profileList.push(friendProfile);
+      });
+      res.status(200).json({
+        status: true,
+        users: profileList
+      });
+    }
+    else {
+      res.status(200).json({
+        status: true,
+        //message: 'CSDL chưa có friendList',
+        users: []
+      });
+    }
+  }
+  catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error.message
+    });
+  }
 }
