@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs } from "firebase/firestore"
+import { Timestamp, addDoc, collection, getDoc, getDocs } from "firebase/firestore"
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import Randomstring from "randomstring"
 
@@ -37,7 +37,8 @@ export const createPost = async (req, res) => {
             body: body,
             image: imageStorageURL,
             video: videoStorageURL,
-            userId: userId
+            userId: userId,
+            dateCreated: Timestamp.fromDate(new Date())
         }).then(() => {
             res.status(200).json({
                 status: true,
@@ -46,7 +47,8 @@ export const createPost = async (req, res) => {
                     body: body,
                     image: imageStorageURL,
                     video: videoStorageURL,
-                    userId: userId
+                    userId: userId,
+                    dateCreated: Timestamp.fromDate(new Date())
                 }
             })
         }).catch((error) => {

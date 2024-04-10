@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const API_BASE_URL = "https://web-20232.onrender.com"
-// const API_BASE_URL = "http://localhost:5000"
+// const API_BASE_URL = "https://web-20232.onrender.com"
+const API_BASE_URL = "http://localhost:5000"
 
 export function register(email, password) {
     return axios.post(`${API_BASE_URL}/register`, {
@@ -15,6 +15,10 @@ export function login(email, password) {
         email: email,
         password: password
     })
+}
+
+export function getProfileByUserId(userId) {
+    return axios.get(`${API_BASE_URL}/getProfile/${userId}`);
 }
 
 export function createPost(data) {

@@ -100,6 +100,21 @@ export const logout = async (req, res) => {
     });
 }
 
+export const getUserProfileById = async (req, res) => {
+  const docRef = doc(db, "profiles", req.params.idUser);
+  const docSnap = await getDoc(docRef);
+  if(docSnap.exists()){
+    res.status(200).json({
+      status: true,
+      user: docSnap.data()
+    })
+  } else {
+    res.status(400).json({
+      status: false,
+    })
+  }
+}
+
 // POST /updateProfile/:idUser
 export const updateProfile = async (req, res) => {
   const docRef = doc(db, "profiles", req.params.idUser);

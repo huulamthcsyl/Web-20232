@@ -1,20 +1,38 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, Col, Container, Image } from 'react-bootstrap'
 import heart from '../assets/icons/heart.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
+import { getProfileByUserId } from '../services/API'
 
 export default function Post({ post }) {
+
+  const [name, setName] = useState("");
+  const [avatarImgLink, setAvatarImgLink] = useState();
+  const [dateCreated, setDateCreated] = useState();
+
+  useEffect(() => {
+    getProfileByUserId(post.userId)
+    .then(res => {
+      setName(res.data.user.firstName + " " + res.data.user.lastName);
+      setAvatarImgLink(res.data.user.avatar);
+    })
+    const fireBaseTime = new Date(
+      post.dateCreated.seconds * 1000 + post.dateCreated.nanoseconds / 1000000,
+    );
+    setDateCreated(fireBaseTime.toLocaleTimeString('vi-VN') + " " + fireBaseTime.toLocaleDateString('vi-VN'))
+  }, [post])
+
   return (
     <Card className='mb-2'>
       <Card.Header>
-        <Container className='d-flex justify-content-between'>
+        <Container className='d-flex justify-content-between p-0'>
           <Col className='d-flex'>
-            <img src='https://via.placeholder.com/50' alt='avatar' style={{ borderRadius: '50%' }} />
-            <h5 className='align-self-center ms-2'>Nguyễn Văn A</h5>
+            <img src={avatarImgLink} alt='avatar' style={{width: '40px', borderRadius: '50%' }} />
+            <h5 className='align-self-center ms-2'>{name}</h5>
           </Col>
-          <Col className='d-flex'>
-            <p className='align-self-center m-0'>1 giờ trước</p>
+          <Col className='d-flex flex-row-reverse'>
+            <p className='align-self-center m-0'>Tạo lúc: {dateCreated}</p>
           </Col>
         </Container>
       </Card.Header>
@@ -22,9 +40,9 @@ export default function Post({ post }) {
         <Card.Text>
           {post.body}
         </Card.Text>
-        <Container className='d-flex justify-content-start mb-2 p-0'>
+        <Container className='d-flex justify-content-start mb-2 p-0' style={{overflowX: 'auto'}}>
           {post.image && post.image.map((image, index) => (
-            <Image key={index} src={image} style={{ maxWidth: '200px', maxHeight: '400px' }} className='me-3 border' />
+            <Image key={index} src={image} style={{ maxWidth: '300px'}} className='me-3 border' />
           ))}
         </Container>
         {post.video && <video className='border' src={post.video} controls width="100%" />}
