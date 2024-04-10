@@ -32,6 +32,7 @@ export const register = async (req, res, next) => {
         .then(() => {
           res.status(200).json({
             status: true,
+            user: userCredential.user,
             message: "Đăng ký thành công"
           })
         })
