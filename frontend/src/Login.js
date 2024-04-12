@@ -18,7 +18,6 @@ export default function Login() {
       .then(res => {
         if (res.status === 200) {
           if (res.data.status) {
-            console.log(res.data.user)
             localStorage.setItem('userId', res.data.user.uid)
             navigate('/')
           }
