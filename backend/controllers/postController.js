@@ -98,7 +98,7 @@ export const getAllPost = async (req, res) => {
     let post = []
     const querySnapshot = await getDocs(collection(db, "posts"))
     querySnapshot.forEach((doc) => {
-        post.push(doc.data())
+        post.push({id: doc.id, data: doc.data()})
     })
 
     if (querySnapshot.empty) {

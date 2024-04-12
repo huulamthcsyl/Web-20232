@@ -10,8 +10,10 @@ export default function NewFeeds() {
 
   useEffect(() => {
     getAllPost()
-      .then(data => {
-        setPosts(data.data.data)
+      .then(res => {
+        res.data.data.forEach(doc => {
+          setPosts(prev => [...prev, {id: doc.id, ...doc.data}])
+        })
       })
       .catch(error => {
         console.log(error)
