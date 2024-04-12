@@ -89,7 +89,6 @@ export const getAllPost = async (req, res) => {
     let posts = []
     const querySnapshot = await getDocs(collection(db, "posts"))
     querySnapshot.forEach((doc) => {
-        console.log(doc.data())
         posts.push(doc.data())
     })
 
@@ -113,19 +112,19 @@ export const getPostByPostId = async (req, res) => {
         await getDocs(collection(db, "posts"))
 
     querySnapshot.forEach((doc) => {
-        if (doc.data().userId === userId) {
+        if (doc.id === postId) {
             posts.push(doc.data())
         }
     })
 
     if (posts.length === 0) {
         res.status(201).json({
-            message: `No posts by user ${userId} found`,
+            message: `No posts by id ${postId} found`,
         })
     }
 
     res.status(200).json({
-        message: `Found posts by user ${userId}.`,
+        message: `Found posts by id ${postId}.`,
         data: posts
     })
 }
