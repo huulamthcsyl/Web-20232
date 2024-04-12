@@ -1,5 +1,5 @@
-import { Timestamp, addDoc, collection, getDoc, getDocs } from "firebase/firestore"
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import {addDoc, collection, getDocs, Timestamp} from "firebase/firestore"
+import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
 
 import db from '../firebase.js'
@@ -18,7 +18,7 @@ export const createPost = async (req, res) => {
     if (imageFile) {
         for (let i = 0; i < imageFile.length; i++) {
             const imageStorageRef = ref(storage, `/postImage/${userId}/${Randomstring.generate()}+${imageFile[i].originalname}`)
-            promises.push(uploadBytes(imageStorageRef, imageFile[i].buffer, { contentType: imageFile[i].mimetype }).then(async (snapshot) => {
+            promises.push(uploadBytes(imageStorageRef, imageFile[i].buffer, {contentType: imageFile[i].mimetype}).then(async (snapshot) => {
                 imageStorageURL.push(await getDownloadURL(imageStorageRef))
             }))
         }
@@ -26,7 +26,7 @@ export const createPost = async (req, res) => {
 
     if (videoFile) {
         const videoStorageRef = ref(storage, `/postVideo/${userId}/${Randomstring.generate()}+${videoFile[0].originalname}`)
-        promises.push(uploadBytes(videoStorageRef, videoFile[0].buffer, { contentType: videoFile[0].mimetype }).then(async (snapshot) => {
+        promises.push(uploadBytes(videoStorageRef, videoFile[0].buffer, {contentType: videoFile[0].mimetype}).then(async (snapshot) => {
             videoStorageURL = await getDownloadURL(videoStorageRef)
         }))
     }
@@ -61,44 +61,36 @@ export const createPost = async (req, res) => {
 }
 
 export const getPostByUserId = async (req, res) => {
-    const userId = req.body.userId
+    const userId = req.params.userId
     let posts = []
-    let querySnapshot
 
-    if (userId) {
-        querySnapshot = await db.collection("path")
-            .where("userId", "==", userId)
-            .get()
-    } else {
-        querySnapshot = await db.collection("path")
-            .get()
-    }
+    const querySnapshot =
+        await getDocs(collection(db, "posts"))
 
-    if (querySnapshot.empty) {
-        res.status(402).json({
-            message: "No post found!"
+    querySnapshot.forEach((doc) => {
+        if (doc.data().userId === userId) {
+            posts.push(doc.data())
+        }
+    })
+
+    if (posts.length === 0) {
+        res.status(201).json({
+            message: `No posts by user ${userId} found`,
         })
     }
 
-    if (userId) {
-        res.status(200).json({
-            message: "Found posts from user id " + userId,
-            userId: userId,
-            data: querySnapshot.docs
-        })
-    } else {
-        res.status(200).json({
-            message: "Found all posts",
-            data: querySnapshot.docs
-        })
-    }
+    res.status(200).json({
+        message: `Found posts by user ${userId}.`,
+        data: posts
+    })
 }
 
 export const getAllPost = async (req, res) => {
-    let post = []
+    let posts = []
     const querySnapshot = await getDocs(collection(db, "posts"))
     querySnapshot.forEach((doc) => {
-        post.push(doc.data())
+        console.log(doc.data())
+        posts.push(doc.data())
     })
 
     if (querySnapshot.empty) {
@@ -106,8 +98,34 @@ export const getAllPost = async (req, res) => {
             message: "No post found!"
         })
     }
+
     res.status(200).json({
         message: "Found all posts",
-        data: post
+        data: posts
+    })
+}
+
+export const getPostByPostId = async (req, res) => {
+    const postId = req.params.postId
+    let posts = []
+
+    const querySnapshot =
+        await getDocs(collection(db, "posts"))
+
+    querySnapshot.forEach((doc) => {
+        if (doc.data().userId === userId) {
+            posts.push(doc.data())
+        }
+    })
+
+    if (posts.length === 0) {
+        res.status(201).json({
+            message: `No posts by user ${userId} found`,
+        })
+    }
+
+    res.status(200).json({
+        message: `Found posts by user ${userId}.`,
+        data: posts
     })
 }
