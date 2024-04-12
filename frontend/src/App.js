@@ -7,8 +7,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./PrivateRoute";
 import SetupAccount from "./SetupAccount";
-import DetailPost from "./DetailPost";
+import DetailPost from "./posts/DetailPost";
 import NewFeeds from "./Home/NewFeeds";
+import ImageView from "./posts/ImageView";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="profile/:id" element={<Profile />}/>
           <Route path="/post/:id" element={<DetailPost />} />
         </Route>
+        <Route path="/post/:postId/image/:imagePosition" element={<ImageView />} />
       </Routes>
       <ToastContainer hideProgressBar />
     </BrowserRouter>

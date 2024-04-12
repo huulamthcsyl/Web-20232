@@ -32,3 +32,7 @@ export function createPost(data) {
 export function getAllPost() {
     return axios.get(`${API_BASE_URL}/getAllPost`)
 }
+
+export function getPostById(id) {
+    return axios.get(`${API_BASE_URL}/getPostByPostId/${id}`)
+}

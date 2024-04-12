@@ -20,7 +20,7 @@ export default function NavBar() {
   }
 
   return (
-    <Container className='p-2 border-bottom' fluid style={{ height: '10%' }}>
+    <Container className='p-2 border-bottom sticky-top' fluid style={{ height: '10%', backgroundColor: '#fff' }}>
       <Row>
         <Col>
           <Form>
