@@ -9,7 +9,8 @@ import {
   createFriendRequest,
   getUserProfileById,
   acceptFriendRequest,
-  getFriendList
+  getFriendList,
+  sendMessage
 } from '../controllers/userController.js';
 import multer from 'multer';
 
@@ -28,5 +29,9 @@ router.get('/findUser', upload.none(), findUser);
 router.post('/createFriendRequest', upload.none(), createFriendRequest);
 router.post('/acceptFriendRequest', upload.none(), acceptFriendRequest);
 router.get('/getFriendList/:userId', upload.none(), getFriendList);
+router.post('/sendMessage', upload.fields([
+  { name: 'video' },
+  { name: 'image' }
+  ]), sendMessage);
 
 export default router;
