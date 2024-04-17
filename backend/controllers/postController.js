@@ -1,4 +1,4 @@
-import {addDoc, collection, getDocs, Timestamp} from "firebase/firestore"
+import {addDoc, collection, doc, getDoc, getDocs, Timestamp} from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
 
@@ -106,25 +106,23 @@ export const getAllPost = async (req, res) => {
 
 export const getPostByPostId = async (req, res) => {
     const postId = req.params.postId
-    let posts = []
 
-    const querySnapshot =
-        await getDocs(collection(db, "posts"))
-
-    querySnapshot.forEach((doc) => {
-        if (doc.id === postId) {
-            posts.push(doc.data())
+    getDoc(doc(db, "posts", postId))
+    .then((doc) => {
+        if (doc.exists()) {
+            res.status(200).json({
+                message: `Found post with id ${postId}`,
+                data: doc.data()
+            })
+        } else {
+            res.status(404).json({
+                message: `No post with id ${postId} found`
+            })
         }
     })
-
-    if (posts.length === 0) {
-        res.status(201).json({
-            message: `No posts by id ${postId} found`,
+    .catch((error) => {
+        res.status(400).json({
+            message: error.message
         })
-    }
-
-    res.status(200).json({
-        message: `Found posts by id ${postId}.`,
-        data: posts
     })
 }
