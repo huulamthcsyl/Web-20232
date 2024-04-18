@@ -46,7 +46,7 @@ export default function ImageView() {
   return (
     post &&
     <Container fluid className='p-0 m-0 position-relative' style={{height: '1000px'}}>
-      <Container className='bg-dark d-flex justify-content-between p-0 position-fixed'>
+      <Container className='bg-dark d-flex justify-content-between p-0 position-fixed' style={{width: '70%'}}>
         <Button className='bg-dark text-white border-0 text-decoration-none' style={{position: 'absolute', top: '10px', width: '10px', left: '10px'}} onClick={() => navigate(-1)}>
           X
         </Button>

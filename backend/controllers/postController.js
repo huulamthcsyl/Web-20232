@@ -39,7 +39,7 @@ export const createPost = async (req, res) => {
             video: videoStorageURL,
             userId: userId,
             dateCreated: Timestamp.fromDate(new Date())
-        }).then(() => {
+        }).then((docRef) => {
             res.status(200).json({
                 status: true,
                 message: "Tạo bài đăng thành công.",
@@ -48,6 +48,7 @@ export const createPost = async (req, res) => {
                     image: imageStorageURL,
                     video: videoStorageURL,
                     userId: userId,
+                    id: docRef.id,
                     dateCreated: Timestamp.fromDate(new Date())
                 }
             })
