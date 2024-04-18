@@ -45,15 +45,15 @@ export default function ImageView() {
 
   return (
     post &&
-    <Container fluid className='p-0 m-0 position-relative' style={{height: '1000px'}}>
-      <Container className='bg-dark d-flex justify-content-between p-0 position-fixed' style={{width: '70%'}}>
+    <Container fluid className='p-0 m-0 position-relative' style={{height: '100vh'}}>
+      <Container className='bg-dark d-flex justify-content-between p-0 position-fixed' style={{width: '70%', height:'100%'}}>
         <Button className='bg-dark text-white border-0 text-decoration-none' style={{position: 'absolute', top: '10px', width: '10px', left: '10px'}} onClick={() => navigate(-1)}>
           X
         </Button>
         <Button className='p-0 border-0 align-self-center ms-3 btn-light' style={{width: '30px'}} onClick={handlePreviousImage}>
           <Image src={prevArrow} />
         </Button>
-        <Image src={post.image[imagePosition]} style={{maxHeight: '100vh'}}/>
+        <Image className='object-fit-scale' src={post.image[imagePosition]} style={{maxHeight: '100vh', maxWidth: '90%'}}/>
         <Button className='p-0 border-0 align-self-center me-2 btn-light' style={{width: '30px'}} onClick={handleNextImage}>
           <Image src={nextArrow} />
         </Button>
