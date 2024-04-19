@@ -24,7 +24,7 @@ function App() {
           <Route path="profile/:id" element={<Profile />}/>
           <Route path="/post/:id" element={<DetailPost />} />
         </Route>
-        <Route path="/post/:postId/image/:imagePosition" element={<ImageView />} />
+        <Route path="/post/:postId/image" element={<ImageView />} />
       </Routes>
       <ToastContainer hideProgressBar />
     </BrowserRouter>
