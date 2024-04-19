@@ -1,4 +1,14 @@
-import {addDoc, collection, doc, getDoc, getDocs, Timestamp} from "firebase/firestore"
+import {
+    addDoc,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    arrayUnion,
+    arrayRemove,
+    Timestamp,
+    updateDoc
+} from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
 
@@ -126,4 +136,60 @@ export const getPostByPostId = async (req, res) => {
             message: error.message
         })
     })
+}
+
+export const likePost = async (req, res) => {
+    const userId = req.params.userId
+    const postId = req.params.postId
+
+    const postRef = doc(db, "posts", postId)
+    const liked_list = (await getDoc(postRef)).data().likedList
+
+    try {
+        if (liked_list.includes(userId)) {
+            res.status(202).json({
+                message: "User already liked this post"
+            })
+        } else {
+            await updateDoc(postRef, {
+                likedList: arrayUnion(userId)
+            })
+
+            res.status(200).json({
+                message: `Post with id ${postId} liked by user ${userId}`
+            })
+        }
+    } catch (e) {
+        res.status(201).json({
+            message: `Failed to like post`
+        })
+    }
+}
+
+export const removeLikePost = async (req, res) => {
+    const userId = req.params.userId
+    const postId = req.params.postId
+
+    const postRef = doc(db, "posts", postId)
+    const liked_list = (await getDoc(postRef)).data().likedList
+
+    try {
+        if (!liked_list.includes(userId)) {
+            res.status(202).json({
+                message: "User hasn't liked this post"
+            })
+        } else {
+            await updateDoc(postRef, {
+                likedList: arrayRemove(userId)
+            })
+
+            res.status(200).json({
+                message: `Post with id ${postId} remove liked by user ${userId}`
+            })
+        }
+    } catch (e) {
+        res.status(201).json({
+            message: `Failed to remove like post`
+        })
+    }
 }

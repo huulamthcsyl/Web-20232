@@ -1,10 +1,18 @@
 // import db from '../firebase.js'
 //
-// class User {
-//     constructor(email, password) {
-//         this.email = email;
-//         this.password = password;
+// class Post {
+//     body
+//     image = []
+//     video = []
+//     userId
+//     dateCreated
+//
+//     constructor() {
+//     }
+//
+//     getPostByPostId(postId) {
+//
 //     }
 // }
 //
-// export default User;
+// export default Post;
