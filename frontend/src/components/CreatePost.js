@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Image } from 'react-bootstrap';
+import { Container, Form, Button, Image, Spinner } from 'react-bootstrap';
 import image from '../assets/icons/image.png';
 import video from '../assets/icons/video.png';
 import { PreviewImage } from './PreviewImage';
@@ -11,6 +11,7 @@ export function CreatePost({ posts, setPosts }) {
   const [body, setBody] = useState("");
   const [selectedImage, setSelectedImage] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Handle selected image
   const onImageSelected = (e) => {
@@ -22,8 +23,10 @@ export function CreatePost({ posts, setPosts }) {
   };
 
   const handleCreatePost = (e) => {
+    setIsLoading(isLoading => !isLoading);
     e.preventDefault();
     // Tạo formData để gửi dữ liệu lên server
+    console.log(isLoading)
     const formData = new FormData();
     formData.append('body', body);
     selectedImage.forEach((image) => {
@@ -41,6 +44,7 @@ export function CreatePost({ posts, setPosts }) {
         setBody("");
         setSelectedImage([]);
         setSelectedVideo(null);
+        setIsLoading(isLoading => !isLoading);
       })
       .catch(error => {
         console.log(error);
@@ -48,7 +52,8 @@ export function CreatePost({ posts, setPosts }) {
   };
 
   return (
-    <Form className='mb-4 border' onSubmit={handleCreatePost}>
+    isLoading ? <Spinner animation='border' />
+    : <Form className='mb-4 border' onSubmit={handleCreatePost}>
       <textarea className="form-control mb-2" placeholder="Bạn đang nghĩ gì" style={{ height: "100px", border: 0 }} value={body} onChange={e => setBody(e.target.value)}/>
       {selectedImage.length > 0 &&
         <Container className='d-inline-flex justify-content-start p-2' style={{ overflowX: 'auto' }}>

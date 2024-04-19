@@ -16,7 +16,7 @@ export default function configureSocket(server) {
 
     io.on('connection', (socket) => {
         socket.on('sendMessage', (message) => {
-            socket.to(message.sentUserId).to(recievedUserId).emit('recieveMessage', message);
+            socket.to(message.sentUserId).to(message.recievedUserId).emit('recieveMessage', message);
         });
     });
 }

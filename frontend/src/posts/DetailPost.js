@@ -30,8 +30,8 @@ export default function DetailPost() {
     // Fetch post by id
     getPostById(id)
       .then(res => {
-        setPost(res.data.data[0]);
-        getUserInfo(res.data.data[0]);
+        setPost(res.data.data);
+        getUserInfo(res.data.data);
       })
       .catch(error => {
         console.log(error)
@@ -59,8 +59,8 @@ export default function DetailPost() {
           </Card.Text>
           <Container className='d-flex justify-content-start mb-2 p-0' style={{overflowX: 'auto'}}>
             {post.image && post.image.map((image, index) => (
-              <Link to={`image/${index}`}>
-                <Image key={index} src={image} style={{ maxWidth: '300px'}} className='me-3 border' />
+              <Link className='p-0 me-3' to={`image`} state={{imagePosition: index}}>
+                <Image key={index} src={image} style={{ maxWidth: '300px'}} className='p-0 border' />
               </Link>
             ))}
           </Container>
