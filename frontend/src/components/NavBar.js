@@ -6,6 +6,7 @@ import friends from '../assets/icons/friends.png'
 import user from '../assets/icons/user.png'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/icons/logo.png'
+import { socket } from '../socket'
 
 /**
  * Represents the navigation bar component.
@@ -16,8 +17,10 @@ export default function NavBar() {
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    localStorage.removeItem('userId')
-    navigate('/login')
+    localStorage.removeItem('userId');
+    // Disconnect socket.io connection
+    socket.disconnect();
+    navigate('/login');
   }
 
   return (

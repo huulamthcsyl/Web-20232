@@ -1,14 +1,19 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import NavBar from './components/NavBar'
 import { Outlet } from 'react-router-dom'
 import ProfileCard from './components/ProfileCard'
 import { Container } from 'react-bootstrap'
 import FriendList from './components/FriendList'
 import ConversationsContainer from './ConversationsContainer'
+import { socket } from './socket'
 
 export default function Layout() {
 
   const [conversations, setConversations] = useState([]);
+
+  useEffect(() => {
+    socket.connect();
+  }, []);
 
   return (
     <Container fluid className='p-0 position-relative'>

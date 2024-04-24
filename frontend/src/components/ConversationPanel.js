@@ -13,6 +13,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
     setConversations(conversations.filter(msg => msg.receivedUserId !== conversation.receivedUserId));
   }
 
+  // Send message to server
   const handleSendMessage = () => {
     socket.emit('sendMessage', {
       sentUserId: localStorage.getItem('userId'),
@@ -24,12 +25,15 @@ export default function ConversationPanel({ conversation, conversations, setConv
       receivedUserId: conversation.receivedUserId,
       content: message
     }]);
+    setMessage("");
   }
 
+  // Receive message from server
   const receiveMessage = (msg) => {
-    setListMessages([...listMessages, msg]);
+    if(msg.receivedUserId === conversation.sentUserId && msg.sentUserId === conversation.receivedUserId) setListMessages([...listMessages, msg]);
   }
 
+  // Listen for incoming messages
   socket.on('receiveMessage', receiveMessage);
 
   useEffect(() => {
@@ -60,7 +64,9 @@ export default function ConversationPanel({ conversation, conversations, setConv
         ))}
       </Container>
       <Container className='p-0 d-flex'>
-        <input value={message} onChange={e => setMessage(e.target.value)} type='text' className='form-control' />
+        <input value={message} onChange={e => setMessage(e.target.value)} type='text' className='form-control' onKeyDown={e => {
+          if(e.key === 'Enter') handleSendMessage();
+        }}/>
         <Button variant='primary' className='mt-2' onClick={handleSendMessage}>Gửi</Button>
       </Container>
     </Container>

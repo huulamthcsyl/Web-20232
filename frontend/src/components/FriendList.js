@@ -18,6 +18,9 @@ export default function FriendList({ conversations, setConversations}) {
   }, [])
 
   const handleNewMessage = (receivedUserId) => {
+    // Check if conversation already exists
+    if(conversations.find(conversation => conversation.receivedUserId === receivedUserId)) return;
+
     // Add new message to the message container
     setConversations([...conversations, {
       sentUserId: localStorage.getItem('userId'),
