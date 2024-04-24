@@ -1,9 +1,9 @@
 import { io } from 'socket.io-client';
 
-const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5000';
+const URL = process.env.NODE_ENV === 'production' ? "https://web-20232.onrender.com" : 'http://localhost:5000';
 
 export const socket = io(URL, {
   query: {
     userId: localStorage.getItem('userId')
-  }
+  },
 });

@@ -19,8 +19,10 @@ export default function configureSocket(server) {
     });
 
     io.on('connection', (socket) => {
+        console.log(socket.userId + " joined");
         socket.join(socket.userId);
         socket.on('sendMessage', (message) => {
+            console.log(message)
             socket.to(message.sentUserId).to(message.receivedUserId).emit('receiveMessage', message);
         });
     });
