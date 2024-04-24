@@ -1,7 +1,11 @@
 import { Server } from "socket.io";
 
 export default function configureSocket(server) {
-    const io = new Server(server, {});
+    const io = new Server(server, {
+        cors: {
+            origin: "*",
+        },
+    });
     
     io.use((socket, next) => {
         const userId = socket.handshake.query.userId;
@@ -15,8 +19,9 @@ export default function configureSocket(server) {
     });
 
     io.on('connection', (socket) => {
+        socket.join(socket.userId);
         socket.on('sendMessage', (message) => {
-            socket.to(message.sentUserId).to(message.recievedUserId).emit('recieveMessage', message);
+            socket.to(message.sentUserId).to(message.receivedUserId).emit('receiveMessage', message);
         });
     });
 }

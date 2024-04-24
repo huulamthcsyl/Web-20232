@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Card, Col, Row, Image } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
-import { getPostById, getProfileByUserId } from '../services/API';
+import { getPostById, getProfileByUserId, removeLikePost, likePost } from '../services/API';
 import heart from '../assets/icons/heart.png'
+import heart_red from '../assets/icons/heart_red.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
 
@@ -13,6 +14,8 @@ export default function DetailPost() {
   const [name, setName] = useState("");
   const [avatarImgLink, setAvatarImgLink] = useState();
   const [dateCreated, setDateCreated] = useState();
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   let getUserInfo = (post) => {
     getProfileByUserId(post.userId)
@@ -26,11 +29,25 @@ export default function DetailPost() {
     setDateCreated(fireBaseTime.toLocaleTimeString('vi-VN') + " " + fireBaseTime.toLocaleDateString('vi-VN'))
   }
 
+  const handleClickLike = () => {
+    setIsLiked(isLiked => !isLiked);
+    if (isLiked) {
+      removeLikePost(localStorage.getItem('userId'), id);
+      setLikeCount(likeCount => likeCount - 1);
+    } else {
+      likePost(localStorage.getItem('userId'), id);
+      setLikeCount(likeCount => likeCount + 1);
+    }
+  }
+
   useEffect(() => {
     // Fetch post by id
     getPostById(id)
       .then(res => {
+        console.log(res.data.data)
         setPost(res.data.data);
+        setIsLiked(res.data.data.likedList.includes(localStorage.getItem('userId')));
+        setLikeCount(res.data.data.likedList.length);
         getUserInfo(res.data.data);
       })
       .catch(error => {
@@ -69,8 +86,8 @@ export default function DetailPost() {
         <Card.Footer>
           <Container className='d-flex justify-content-between'>
             <Col className='d-flex'>
-              <Image className='me-2' src={heart} />
-              <p className='align-self-center m-0'>10 lượt thích</p>
+              <Image className='me-2' src={isLiked ? heart_red : heart} onClick={handleClickLike}/>
+              <p className='align-self-center m-0'>{likeCount} lượt thích</p>
             </Col>
             <Col className='d-flex'>
             <Image className='me-2' src={comment} />

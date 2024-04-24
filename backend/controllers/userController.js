@@ -191,6 +191,17 @@ export const updateProfile = async (req, res) => {
     if (!avatarCheck && !coverCheck) updateFirestore();
 }
 
+export const getAllUser = async (req, res) => {
+  const querySnapshot = await getDocs(collection(db, "profiles"));
+  let users = [];
+  querySnapshot.forEach((doc) => {
+    users.push({id: doc.id, ...doc.data()});
+  });
+  res.status(200).json({
+    users: users
+  });
+}
+
 // GET /findUser?name=...
 export const findUser = async (req, res) => {
   // tạo dữ liệu cho việc tìm kiếm

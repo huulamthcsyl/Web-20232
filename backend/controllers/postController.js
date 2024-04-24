@@ -48,6 +48,7 @@ export const createPost = async (req, res) => {
             image: imageStorageURL,
             video: videoStorageURL,
             userId: userId,
+            likedList: [],
             dateCreated: Timestamp.fromDate(new Date())
         }).then((docRef) => {
             res.status(200).json({
@@ -58,6 +59,7 @@ export const createPost = async (req, res) => {
                     image: imageStorageURL,
                     video: videoStorageURL,
                     userId: userId,
+                    likedList: [],
                     id: docRef.id,
                     dateCreated: Timestamp.fromDate(new Date())
                 }
