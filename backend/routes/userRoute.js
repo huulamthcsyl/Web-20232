@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 
 import {
   register,
@@ -10,10 +11,8 @@ import {
   getUserProfileById,
   acceptFriendRequest,
   getFriendList,
-  sendMessage,
   getAllUser
 } from '../controllers/userController.js';
-import multer from 'multer';
 
 const router = express.Router();
 const upload = multer();
@@ -31,9 +30,5 @@ router.get('/findUser', upload.none(), findUser);
 router.post('/createFriendRequest', upload.none(), createFriendRequest);
 router.post('/acceptFriendRequest', upload.none(), acceptFriendRequest);
 router.get('/getFriendList/:userId', upload.none(), getFriendList);
-router.post('/sendMessage', upload.fields([
-  { name: 'video' },
-  { name: 'image' }
-  ]), sendMessage);
 
 export default router;

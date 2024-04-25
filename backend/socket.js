@@ -20,8 +20,27 @@ export default function configureSocket(server) {
 
     io.on('connection', (socket) => {
         socket.join(socket.userId);
+
+        // chuyển id khi online đến người dùng khác
+        socket.broadcast.emit("userConnected", {
+            userID: socket.id
+        });
+        
+        // chuyển tin nhắn
         socket.on('sendMessage', (message) => {
             socket.to(message.sentUserId).to(message.receivedUserId).emit('receiveMessage', message);
+        });
+
+        // gửi lời mời kết bạn
+        socket.on('sendFriendRequest', (request) => {
+            socket.to(request.friendId).emit('receiveFriendRequest', request);
+        });
+
+        // xóa id khi offline
+        socket.on('disconnect', () => {
+            socket.broadcast.emit("userDisconnected", {
+                userID: socket.id
+            });
         });
     });
 }
