@@ -195,3 +195,45 @@ export const removeLikePost = async (req, res) => {
         })
     }
 }
+
+export const createComment = async (req, res) => {
+    const body = req.body.body
+    const postId = req.body.postId
+    const userId = req.body.userId
+
+    const promises = []
+
+    // Sau khi tất cả các promise đã được resolve thì thực hiện thêm dữ liệu vào firestore
+    Promise.all(promises).then(() => {
+        // form-data
+        addDoc(collection(db, "comments"), {
+            body: body,
+            postId: postId,
+            // image: imageStorageURL,
+            // video: videoStorageURL,
+            userId: userId,
+            likedList: [],
+            dateCreated: Timestamp.fromDate(new Date())
+        }).then((docRef) => {
+            res.status(200).json({
+                status: true,
+                message: "Tạo bình luận thành công.",
+                comment: {
+                    body: body,
+                    postId: postId,
+                    // image: imageStorageURL,
+                    // video: videoStorageURL,
+                    userId: userId,
+                    likedList: [],
+                    id: docRef.id,
+                    dateCreated: Timestamp.fromDate(new Date())
+                }
+            })
+        }).catch((error) => {
+            res.status(400).json({
+                status: false,
+                message: error.message
+            })
+        })
+    })
+}
