@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
-
+import io from "../index.js"
 import db from '../firebase.js'
 
 export const createPost = async (req, res) => {
@@ -146,6 +146,7 @@ export const likePost = async (req, res) => {
 
     const postRef = doc(db, "posts", postId)
     const liked_list = (await getDoc(postRef)).data().likedList
+    const ownerId = (await getDoc(postRef)).data().userId
 
     try {
         if (liked_list.includes(userId)) {
@@ -155,6 +156,12 @@ export const likePost = async (req, res) => {
         } else {
             await updateDoc(postRef, {
                 likedList: arrayUnion(userId)
+            })
+
+            io.emit("likePost", {
+                userId: userId,
+                ownerId: ownerId,
+                postId: postId
             })
 
             res.status(200).json({
@@ -214,7 +221,18 @@ export const createComment = async (req, res) => {
             userId: userId,
             likedList: [],
             dateCreated: Timestamp.fromDate(new Date())
-        }).then((docRef) => {
+        }).then(async (docRef) => {
+            // Extract ownerId from original Post
+            const postRef = doc(db, "posts", postId)
+            const ownerId = (await getDoc(postRef)).data().userId
+
+            io.emit("createComment", {
+                body: body,
+                userId: userId,
+                ownerId: ownerId,
+                postId: postId
+            })
+
             res.status(200).json({
                 status: true,
                 message: "Tạo bình luận thành công.",
