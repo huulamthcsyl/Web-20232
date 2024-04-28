@@ -20,3 +20,5 @@ route(app);
 httpServer.listen(config.port, () =>
   console.log(`Server is live @ ${config.hostUrl}`),
 );
+
+module.exports = io

@@ -58,7 +58,7 @@ export const sendMessage = async (req, res) => {
           res.status(200).json({
               status: true,
               message: "Gửi tin nhắn thành công.",
-              message: {
+              msg: {
                 body: body,
                 image: imageStorageURL,
                 video: videoStorageURL,
