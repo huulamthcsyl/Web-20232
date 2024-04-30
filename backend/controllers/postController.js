@@ -158,9 +158,8 @@ export const likePost = async (req, res) => {
                 likedList: arrayUnion(userId)
             })
 
-            io.emit("likePost", {
+            io.to(ownerId).emit("likePost", {
                 userId: userId,
-                ownerId: ownerId,
                 postId: postId
             })
 
@@ -226,10 +225,9 @@ export const createComment = async (req, res) => {
             const postRef = doc(db, "posts", postId)
             const ownerId = (await getDoc(postRef)).data().userId
 
-            io.emit("createComment", {
+            io.to(ownerId).emit("createComment", {
                 body: body,
                 userId: userId,
-                ownerId: ownerId,
                 postId: postId
             })
 

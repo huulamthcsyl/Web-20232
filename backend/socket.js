@@ -36,16 +36,6 @@ export default function configureSocket(server) {
             socket.to(request.friendId).emit('receiveFriendRequest', request);
         });
 
-        // notify like post
-        socket.on("likePost", (request) => {
-            socket.to(request.ownerId).emit("notify_likePost", request)
-        })
-
-        // notify comment post
-        socket.on("createComment", (request) => {
-            socket.to(request.ownerId).emit("notify_commentPost", request)
-        })
-
         // xóa id khi offline
         socket.on('disconnect', () => {
             socket.broadcast.emit("userDisconnected", {
