@@ -5,7 +5,11 @@ import {
     Timestamp,
     query,
     where,
-     getDocs
+    getDocs,
+    getDoc,
+    updateDoc,
+    doc,
+    setDoc
   } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import db from '../firebase.js';
@@ -103,4 +107,31 @@ export const getUnreadMessages = async (req, res) => {
         message: error.message
       });
     });
+}
+
+// Save message
+export const saveMessage = async (message) => {
+  let id = message.sentUserId + '-' + message.receivedUserId;
+  const conservationDoc = doc(db, "conservations", id);
+  const data = await getDoc(conservationDoc);
+  if (data.exists()) {
+    let messages = data.data().messages;
+    messages.push({
+      content: message.content,
+      createdAt: Timestamp.fromDate(new Date())
+    });
+    updateDoc(doc(db, "conservations", id), {
+      messages: messages
+    });
+  }
+  else {
+    setDoc(doc(db, "conservations", id), {
+      sentUserId: message.sentUserId,
+      recievedUserId: message.receivedUserId,
+      messages: [{
+        content: message.content,
+        createdAt: Timestamp.fromDate(new Date())
+      }]
+    });
+  }
 }

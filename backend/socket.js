@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { saveMessage } from "./controllers/chatController.js";
 
 export default function configureSocket(server) {
     const io = new Server(server, {
@@ -29,6 +30,7 @@ export default function configureSocket(server) {
         // chuyển tin nhắn
         socket.on('sendMessage', (message) => {
             socket.to(message.sentUserId).to(message.receivedUserId).emit('receiveMessage', message);
+            saveMessage(message);
         });
 
         // gửi lời mời kết bạn
