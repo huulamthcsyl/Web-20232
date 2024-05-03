@@ -111,27 +111,31 @@ export const getUnreadMessages = async (req, res) => {
 
 // Save message
 export const saveMessage = async (message) => {
-  let id = message.sentUserId + '-' + message.receivedUserId;
-  const conservationDoc = doc(db, "conservations", id);
+  let id = (message.sentUserId < message.receivedUserId) ? 
+  (message.sentUserId + '-' + message.receivedUserId) : 
+  (message.receivedUserId + '-' + message.sentUserId);
+  const conservationDoc = doc(db, "conversations", id);
   const data = await getDoc(conservationDoc);
   if (data.exists()) {
-    let messages = data.data().messages;
-    messages.push({
+    const messageCollection = collection(data.ref, "messages");
+    await addDoc(messageCollection, {
+      sentUserId: message.sentUserId,
+      receivedUserId: message.receivedUserId,
       content: message.content,
-      createdAt: Timestamp.fromDate(new Date())
-    });
-    updateDoc(doc(db, "conservations", id), {
-      messages: messages
-    });
+      createdAt: Timestamp.fromDate(new Date()),
+      isRead: false
+    }); 
   }
   else {
-    setDoc(doc(db, "conservations", id), {
+    await setDoc(doc(db, "conversations", id), {});
+    const messageCollection = collection(doc(db, "conversations", id), "messages");
+    await addDoc(messageCollection, {
       sentUserId: message.sentUserId,
-      recievedUserId: message.receivedUserId,
-      messages: [{
-        content: message.content,
-        createdAt: Timestamp.fromDate(new Date())
-      }]
-    });
+      receivedUserId: message.receivedUserId,
+      content: message.content,
+      createdAt: Timestamp.fromDate(new Date()),
+      isRead: false
+    }); 
   }
+
 }
