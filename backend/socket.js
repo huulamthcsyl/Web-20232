@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { saveMessage } from "./controllers/chatController.js";
+import { likePost, createComment } from "./controllers/postController.js";
 
 export default function configureSocket(server) {
     const io = new Server(server, {
@@ -36,6 +37,11 @@ export default function configureSocket(server) {
         // gửi lời mời kết bạn
         socket.on('sendFriendRequest', (request) => {
             socket.to(request.friendId).emit('receiveFriendRequest', request);
+        });
+
+        // notify on post liked
+        socket.on('likePost', (request) => {
+            socket.to(request.postId.userId).emit('likePost', request);
         });
 
         // xóa id khi offline
