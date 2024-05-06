@@ -11,7 +11,6 @@ import {
 } from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
-import io from "../index.js"
 import db from '../firebase.js'
 
 export const createPost = async (req, res) => {
@@ -158,11 +157,6 @@ export const likePost = async (req, res) => {
                 likedList: arrayUnion(userId)
             })
 
-            io.to(ownerId).emit("likePost", {
-                userId: userId,
-                postId: postId
-            })
-
             res.status(200).json({
                 message: `Post with id ${postId} liked by user ${userId}`
             })
@@ -224,12 +218,6 @@ export const createComment = async (req, res) => {
             // Extract ownerId from original Post
             const postRef = doc(db, "posts", postId)
             const ownerId = (await getDoc(postRef)).data().userId
-
-            io.to(ownerId).emit("createComment", {
-                body: body,
-                userId: userId,
-                postId: postId
-            })
 
             res.status(200).json({
                 status: true,
