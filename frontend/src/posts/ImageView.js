@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Row, Col, Image, Button } from 'react-bootstrap'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getPostById, getProfileByUserId } from '../services/API';
+import { getPostById, getProfileByUserId, likePost, removeLikePost } from '../services/API';
 import heart from '../assets/icons/heart.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
 import prevArrow from '../assets/icons/prev-arrow.png'
 import nextArrow from '../assets/icons/next-arrow.png'
+import heart_red from '../assets/icons/heart_red.png'
 
 export default function ImageView() {
 
@@ -15,6 +16,8 @@ export default function ImageView() {
   const { postId } = useParams();
   let location = useLocation();
   const [imagePosition, setImagePosition] = useState();
+  const [likeCount, setLikeCount] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
   const navigate = useNavigate();
 
   const handlePreviousImage = () => {
@@ -25,11 +28,30 @@ export default function ImageView() {
     setImagePosition(Math.min(post.image.length - 1, Number(imagePosition) + 1));
   }
 
+  const handleClickLike = () => {
+    setIsLiked(isLiked => !isLiked);
+    if (isLiked) {
+      removeLikePost(localStorage.getItem('userId'), postId);
+      setLikeCount(likeCount => likeCount - 1);
+    } else {
+      likePost(localStorage.getItem('userId'), postId);
+      setLikeCount(likeCount => likeCount + 1);
+    }
+  }
+
+  const handleEscape = (e) => {
+    if (e.key === 'Escape') {
+      navigate(-1);
+    }
+  }
+
   useEffect(() => {
     setImagePosition(location.state.imagePosition);
     getPostById(postId)
       .then(res => {
         setPost(res.data.data)
+        setIsLiked(res.data.data.likedList.includes(localStorage.getItem('userId')))
+        setLikeCount(res.data.data.likedList.length)
         getProfileByUserId(res.data.data.userId)
           .then(res => {
             setUserInfo(res.data.user)
@@ -41,6 +63,10 @@ export default function ImageView() {
       .catch(error => {
         console.log(error)
       })
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    }
   }, [postId])
 
   return (
@@ -74,8 +100,8 @@ export default function ImageView() {
           }
           <Container className='d-flex justify-content-between p-0'>
             <Col className='d-flex'>
-              <Image className='me-2' src={heart} />
-              <p className='align-self-center m-0'>10 lượt thích</p>
+              <Image className='me-2' onClick={handleClickLike} src={isLiked ? heart_red : heart} />
+              <p className='align-self-center m-0'>{likeCount} lượt thích</p>
             </Col>
             <Col className='d-flex'>
             <Image className='me-2' src={comment} />
