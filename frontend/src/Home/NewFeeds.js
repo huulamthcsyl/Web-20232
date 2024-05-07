@@ -3,12 +3,14 @@ import { Container } from 'react-bootstrap'
 import Post from '../components/Post';
 import { CreatePost } from '../components/CreatePost';
 import { getAllPost } from '../services/API';
+import { socket } from '../socket';
 
 export default function NewFeeds() {
 
   const [posts, setPosts] = useState([])
 
   useEffect(() => {
+    Notification.requestPermission();
     getAllPost()
       .then(res => {
         res.data.data.forEach(doc => {

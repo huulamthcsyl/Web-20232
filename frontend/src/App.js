@@ -10,6 +10,7 @@ import SetupAccount from "./SetupAccount";
 import DetailPost from "./posts/DetailPost";
 import NewFeeds from "./Home/NewFeeds";
 import ImageView from "./posts/ImageView";
+import { socket } from "./socket";
 
 function App() {
   return (

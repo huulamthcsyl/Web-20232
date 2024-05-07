@@ -44,7 +44,6 @@ export default function DetailPost() {
     // Fetch post by id
     getPostById(id)
       .then(res => {
-        console.log(res.data.data)
         setPost(res.data.data);
         setIsLiked(res.data.data.likedList.includes(localStorage.getItem('userId')));
         setLikeCount(res.data.data.likedList.length);

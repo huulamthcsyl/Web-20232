@@ -30,10 +30,19 @@ export default function ConversationPanel({ conversation, conversations, setConv
 
   // Receive message from server
   const receiveMessage = (msg) => {
-    if(msg.receivedUserId === conversation.sentUserId && msg.sentUserId === conversation.receivedUserId) setListMessages([...listMessages, msg]);
+    if(msg.receivedUserId === conversation.sentUserId && msg.sentUserId === conversation.receivedUserId){ 
+      setListMessages([...listMessages, msg]);
+    }
   }
 
-  // Listen for incoming messages
+  useEffect(() => {
+    if(listMessages.length !== 0){
+      let notification = new Notification(`Bạn có tin nhắn từ ${receivedUserProfile.firstName + " " + receivedUserProfile.lastName}`, {
+        body: listMessages[listMessages.length - 1].content
+      });
+    }
+  }, [listMessages]);
+
   socket.on('receiveMessage', receiveMessage);
 
   useEffect(() => {
@@ -55,9 +64,9 @@ export default function ConversationPanel({ conversation, conversations, setConv
         <h5 className='align-self-center ms-2'>{receivedUserProfile?.firstName + " " + receivedUserProfile?.lastName}</h5>
         <Button variant='danger' className='ms-auto' onClick={handleCloseMessage}>X</Button>
       </Container>
-      <Container className='border rounded-2 p-1' style={{height: '300px', overflowY: 'scroll'}}>
+      <Container className='border rounded-2 p-1 mb-2' style={{height: '300px', overflowY: 'scroll'}}>
         {listMessages.map((msg, index) => (
-          <Container key={index} className='border rounded-2 p-1 m-1'>
+          <Container key={index} className='border rounded-2 p-1 mb-1'>
             <h6>{msg.sentUserId === localStorage.getItem('userId') ? 'Bạn' : receivedUserProfile?.firstName + " " + receivedUserProfile?.lastName}</h6>
             <p>{msg.content}</p>
           </Container>
