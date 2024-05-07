@@ -36,7 +36,8 @@ export default function ConversationPanel({ conversation, conversations, setConv
   }
 
   useEffect(() => {
-    if(listMessages.length !== 0){
+    // Check if user has new message
+    if(listMessages.length !== 0 && listMessages[listMessages.length - 1].sentUserId !== localStorage.getItem('userId')){
       let notification = new Notification(`Bạn có tin nhắn từ ${receivedUserProfile.firstName + " " + receivedUserProfile.lastName}`, {
         body: listMessages[listMessages.length - 1].content
       });
