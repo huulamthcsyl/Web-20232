@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { saveMessage } from "./controllers/chatController.js";
-import { likePost, createComment } from "./controllers/postController.js";
+import { likePost, createPostBelongToPost } from "./controllers/postController.js";
 
 export default function configureSocket(server) {
     const io = new Server(server, {
@@ -40,9 +40,15 @@ export default function configureSocket(server) {
         });
 
         // notify on post liked
+        socket.on('createComment', (request) => {
+            socket.to(request.postId.userId).emit('likePost', request);
+            createPostBelongToPost(request).then()
+        });
+
+        // notify on post liked
         socket.on('likePost', (request) => {
             socket.to(request.postId.userId).emit('likePost', request);
-            likePost(request)
+            likePost(request).then()
         });
 
         // xóa id khi offline

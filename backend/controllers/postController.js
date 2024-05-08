@@ -195,7 +195,7 @@ export const removeLikePost = async (req, res) => {
     }
 }
 
-export const createComment = async (req, res) => {
+export const createPostBelongToPost = async (req) => {
     const body = req.body.body
     const postId = req.body.postId
     const userId = req.body.userId
@@ -205,7 +205,7 @@ export const createComment = async (req, res) => {
     // Sau khi tất cả các promise đã được resolve thì thực hiện thêm dữ liệu vào firestore
     Promise.all(promises).then(() => {
         // form-data
-        addDoc(collection(db, "comments"), {
+        addDoc(collection(db, "posts"), {
             body: body,
             postId: postId,
             // image: imageStorageURL,
@@ -213,30 +213,14 @@ export const createComment = async (req, res) => {
             userId: userId,
             likedList: [],
             dateCreated: Timestamp.fromDate(new Date())
-        }).then(async (docRef) => {
-            // Extract ownerId from original Post
-            const postRef = doc(db, "posts", postId)
-            const ownerId = (await getDoc(postRef)).data().userId
-
-            res.status(200).json({
-                status: true,
-                message: "Tạo bình luận thành công.",
-                comment: {
-                    body: body,
-                    postId: postId,
-                    // image: imageStorageURL,
-                    // video: videoStorageURL,
-                    userId: userId,
-                    likedList: [],
-                    id: docRef.id,
-                    dateCreated: Timestamp.fromDate(new Date())
-                }
-            })
-        }).catch((error) => {
-            res.status(400).json({
-                status: false,
-                message: error.message
+        }).then((docRef) => {
+            // Add comment id to post's comment list
+            const parentPostRef = doc(db, "posts", postId)
+            updateDoc(parentPostRef, {
+                comment: arrayUnion(docRef.id)
             })
         })
+
+
     })
 }
