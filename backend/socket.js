@@ -41,7 +41,7 @@ export default function configureSocket(server) {
 
         // notify on post liked
         socket.on('createComment', (request) => {
-            socket.to(request.postId.userId).emit('likePost', request);
+            socket.to(request.postId.userId).emit('createComment', request);
             createPostBelongToPost(request).then()
         });
 
