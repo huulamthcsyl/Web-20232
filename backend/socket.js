@@ -42,6 +42,7 @@ export default function configureSocket(server) {
         // notify on post liked
         socket.on('likePost', (request) => {
             socket.to(request.postId.userId).emit('likePost', request);
+            likePost(request)
         });
 
         // xóa id khi offline

@@ -139,13 +139,12 @@ export const getPostByPostId = async (req, res) => {
     })
 }
 
-export const likePost = async (req, res) => {
+export const likePost = async (req) => {
     const userId = req.params.userId
     const postId = req.params.postId
 
     const postRef = doc(db, "posts", postId)
     const liked_list = (await getDoc(postRef)).data().likedList
-    const ownerId = (await getDoc(postRef)).data().userId
 
     try {
         if (liked_list.includes(userId)) {
