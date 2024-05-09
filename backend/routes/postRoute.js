@@ -7,8 +7,7 @@ import {
     getAllPost,
     getPostByPostId,
     likePost,
-    removeLikePost,
-    createComment,
+    removeLikePost
 } from '../controllers/postController.js'
 
 const router = express.Router()
@@ -20,6 +19,5 @@ router.get('/getPostByUserId/:userId', getPostByUserId)
 router.get('/getPostByPostId/:postId', getPostByPostId)
 router.post('/likePost/:userId/:postId', likePost)
 router.post('/removeLikePost/:userId/:postId', removeLikePost)
-router.post("/createComment", createComment)
 
 export default router
