@@ -7,7 +7,7 @@ import {
     arrayUnion,
     arrayRemove,
     Timestamp,
-    updateDoc
+    updateDoc, setDoc
 } from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
@@ -228,10 +228,11 @@ export const createNotification = async (req) => {
     const postId = req.body.postId
     const isRead = false
     const type = req.body.type
+    const userId = req.body.userId
     const promises = []
 
     Promise.all(promises).then(()=>{
-        addDoc(collection(db, "posts"), {
+        setDoc(collection(db, "posts", userId), {
             sentUserId: sentUserId,
             postId: postId,
             isRead: isRead,
