@@ -224,11 +224,11 @@ export const createPostBelongToPost = async (req) => {
 }
 
 export const createNotification = async (req) => {
-    const sentUserId = req.body.sentUserId
-    const postId = req.body.postId
+    const sentUserId = req.sentUserId
+    const postId = req.postId
     const isRead = false
-    const type = req.body.type
-    const userId = req.body.userId
+    const type = req.type
+    const userId = req.userId
     const promises = []
 
     Promise.all(promises).then(()=>{
