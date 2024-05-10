@@ -220,7 +220,23 @@ export const createPostBelongToPost = async (req) => {
                 comment: arrayUnion(docRef.id)
             })
         })
+    })
+}
 
+export const createNotification = async (req) => {
+    const sentUserId = req.body.sentUserId
+    const postId = req.body.postId
+    const isRead = false
+    const type = req.body.type
+    const promises = []
 
+    Promise.all(promises).then(()=>{
+        addDoc(collection(db, "posts"), {
+            sentUserId: sentUserId,
+            postId: postId,
+            isRead: isRead,
+            type: type,
+            dateCreated: Timestamp.fromDate(new Date())
+        }).then()
     })
 }
