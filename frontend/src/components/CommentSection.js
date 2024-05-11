@@ -14,7 +14,6 @@ export default function CommentSection({ postId }) {
     setComments([])
     getCommentByPostId(postId)
       .then(res => {
-        console.log(res.data.data)
         res.data.data.forEach(doc => {
           getPostById(doc)
             .then(res => {

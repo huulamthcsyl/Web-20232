@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Button, Container } from 'react-bootstrap'
-import { getProfileByUserId } from '../services/API'
+import { getConversationMessages, getProfileByUserId, markConversationAsRead } from '../services/API'
 import { socket } from '../socket';
 
 export default function ConversationPanel({ conversation, conversations, setConversations }) {
@@ -30,6 +30,14 @@ export default function ConversationPanel({ conversation, conversations, setConv
     setMessage("");
   }
 
+  const handleMarkConversationAsRead = () => {
+    markConversationAsRead({
+      userId: localStorage.getItem('userId'),
+      friendId: conversation.receivedUserId
+    })
+    console.log('Marked as read')
+  }
+
   socket.on('receiveMessage', message => {
     if(message.sentUserId === conversation.receivedUserId) {
       setListMessages([...listMessages, message]);
@@ -41,6 +49,13 @@ export default function ConversationPanel({ conversation, conversations, setConv
     getProfileByUserId(conversation.receivedUserId)
       .then(res => {
         setReceivedUserProfile(res.data.user);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    getConversationMessages(localStorage.getItem('userId'), conversation.receivedUserId)
+      .then(res => {
+        setListMessages(res.data.messages);
       })
       .catch(err => {
         console.log(err);
@@ -66,7 +81,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
       <Container className='p-0 d-flex'>
         <input value={message} onChange={e => setMessage(e.target.value)} type='text' className='form-control' onKeyDown={e => {
           if(e.key === 'Enter') handleSendMessage();
-        }}/>
+        }} onFocus={handleMarkConversationAsRead}/>
         <Button variant='primary' className='mt-2' onClick={handleSendMessage}>Gửi</Button>
       </Container>
     </Container>

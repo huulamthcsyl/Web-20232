@@ -17,7 +17,7 @@ router.post('/sendMessage', upload.fields([
     { name: 'image' }
     ]), sendMessage);
 router.get('/getUnreadMessages/:userId', upload.none(), getUnreadMessages);
-router.get('/getConversationMessages', upload.none(), getConversationMessages);
+router.get('/getConversationMessages/:userId/:friendId', upload.none(), getConversationMessages);
 router.get('/getUnreadConversations/:userId', upload.none(), getUnreadConversations);
 router.post('/markConversationAsRead', upload.none(), markConversationAsRead);
   

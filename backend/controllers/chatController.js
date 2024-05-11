@@ -10,7 +10,8 @@ import {
     getDoc,
     updateDoc,
     doc,
-    setDoc
+    setDoc,
+    orderBy
   } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import db from '../firebase.js';
@@ -154,12 +155,13 @@ export const saveMessage = async (message) => {
 
 // GET /getConversationMessages
 export const getConversationMessages = async (req, res) => {
-  let id = (req.body.userId < req.body.friendId) ? 
-    (req.body.userId + '-' + req.body.friendId) :
-    (req.body.friendId + '-' + req.body.userId);
+  let id = (req.params.userId < req.params.friendId) ? 
+    (req.params.userId + '-' + req.params.friendId) :
+    (req.params.friendId + '-' + req.params.userId);
   let data = await getDocs(collection(doc(db, "conversations", id), "messages"));
   let messages = [];
   data.forEach(message => messages.push(message.data()));
+  messages.sort((a, b) => a.createdAt - b.createdAt);
   res.status(200).json({
     messages
   });
@@ -204,10 +206,11 @@ export const markConversationAsRead = async (req, res) => {
   let data = await getDocs(collection(doc(db, "conversations", id), "messages"));
   await Promise.all(
     data.docs.map(async (message) => {
-      if (message.data().receivedUserId == req.body.userId && !message.data().isRead)
+      if (message.data().receivedUserId == req.body.userId && !message.data().isRead){
         await updateDoc(message.ref, {
           isRead: true
         })
+      }
     })
   );
   res.status(200).json({
