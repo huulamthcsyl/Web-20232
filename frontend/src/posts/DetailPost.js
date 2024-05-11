@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Card, Col, Row, Image } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
-import { getPostById, getProfileByUserId, removeLikePost, likePost } from '../services/API';
+import { getPostById, getProfileByUserId, removeLikePost } from '../services/API';
+import { socket } from '../socket'
 import heart from '../assets/icons/heart.png'
 import heart_red from '../assets/icons/heart_red.png'
 import comment from '../assets/icons/comment.png'
@@ -35,7 +36,12 @@ export default function DetailPost() {
       removeLikePost(localStorage.getItem('userId'), id);
       setLikeCount(likeCount => likeCount - 1);
     } else {
-      likePost(localStorage.getItem('userId'), id);
+      socket.emit("likePost", {
+        nameUserLike: localStorage.getItem('username'),
+        userId: localStorage.getItem('userId'),
+        postId: post.id,
+        postUserId: post.userId
+      })
       setLikeCount(likeCount => likeCount + 1);
     }
   }

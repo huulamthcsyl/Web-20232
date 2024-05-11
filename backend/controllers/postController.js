@@ -140,30 +140,36 @@ export const getPostByPostId = async (req, res) => {
 }
 
 export const likePost = async (req) => {
-    const userId = req.params.userId
-    const postId = req.params.postId
-
-    const postRef = doc(db, "posts", postId)
-    const liked_list = (await getDoc(postRef)).data().likedList
+    const userId = req.userId
+    const postId = req.postId
 
     try {
-        if (liked_list.includes(userId)) {
-            res.status(202).json({
-                message: "User already liked this post"
-            })
-        } else {
-            await updateDoc(postRef, {
-                likedList: arrayUnion(userId)
-            })
+        const postRef = doc(db, "posts", postId)
+        getDoc(postRef)
+        .then((doc) => {
+            if (doc.exists()) {
+                const liked_list = doc.data().likedList
+                if (liked_list.includes(userId)) {
+                    return {
+                        message: "User already liked this post"
+                    }
+                } else {
+                    updateDoc(postRef, {
+                        likedList: arrayUnion(userId)
+                    })
 
-            res.status(200).json({
-                message: `Post with id ${postId} liked by user ${userId}`
-            })
-        }
-    } catch (e) {
-        res.status(201).json({
-            message: `Failed to like post`
+                    return {
+                        message: `Post with id ${postId} liked by user ${userId}`
+                    }
+                }
+            } else {
+                return {
+                    message: `No post with id ${postId} found`
+                }
+            }
         })
+    } catch (e) {
+        console.log(e)
     }
 }
 

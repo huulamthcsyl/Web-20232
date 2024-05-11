@@ -127,6 +127,7 @@ export const saveMessage = async (message) => {
   if (data.exists()) {
     const messageCollection = collection(data.ref, "messages");
     await addDoc(messageCollection, {
+      sentUsername: message.sentUsername,
       sentUserId: message.sentUserId,
       receivedUserId: message.receivedUserId,
       content: message.content,
@@ -141,6 +142,7 @@ export const saveMessage = async (message) => {
     });
     const messageCollection = collection(doc(db, "conversations", id), "messages");
     await addDoc(messageCollection, {
+      sentUsername: message.sentUsername,
       sentUserId: message.sentUserId,
       receivedUserId: message.receivedUserId,
       content: message.content,

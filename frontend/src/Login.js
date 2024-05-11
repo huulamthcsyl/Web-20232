@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Container, Form, FormGroup, Button } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
-import { login } from './services/API'
+import { getProfileByUserId, login } from './services/API'
 import { socket } from './socket'
 
 export default function Login() {
@@ -20,12 +20,11 @@ export default function Login() {
         if (res.status === 200) {
           if (res.data.status) {
             localStorage.setItem('userId', res.data.user.uid);
-            // Configure socket.io connection
-            socket.io.opts.query = {
-              userId: res.data.user.uid
-            }
-            socket.connect();
-            navigate('/');
+            getProfileByUserId(res.data.user.uid)
+              .then(res => {
+                localStorage.setItem('username', res.data.user.firstName + ' ' + res.data.user.lastName)
+                navigate('/');
+              })
           }
           else {
             setErrorMessage(res.data.message)

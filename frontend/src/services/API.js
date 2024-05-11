@@ -36,10 +36,6 @@ export function getPostById(id) {
     return axios.get(`${API_BASE_URL}/getPostByPostId/${id}`)
 }
 
-export function likePost(userId, postId) {
-    return axios.post(`${API_BASE_URL}/likePost/${userId}/${postId}`)
-}
-
 export function removeLikePost(userId, postId) {
     return axios.post(`${API_BASE_URL}/removeLikePost/${userId}/${postId}`)
 }

@@ -4,8 +4,9 @@ import heart_red from '../assets/icons/heart_red.png'
 import heart from '../assets/icons/heart.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
-import { getProfileByUserId, likePost, removeLikePost } from '../services/API'
+import { getProfileByUserId, removeLikePost } from '../services/API'
 import { Link } from 'react-router-dom'
+import { socket } from '../socket'
 
 export default function Post({ post }) {
 
@@ -35,7 +36,12 @@ export default function Post({ post }) {
       removeLikePost(localStorage.getItem('userId'), post.id);
       setLikeCount(likeCount => likeCount - 1);
     } else {
-      likePost(localStorage.getItem('userId'), post.id);
+      socket.emit("likePost", {
+        nameUserLike: localStorage.getItem('username'),
+        userId: localStorage.getItem('userId'),
+        postId: post.id,
+        postUserId: post.userId
+      })
       setLikeCount(likeCount => likeCount + 1);
     }
   }

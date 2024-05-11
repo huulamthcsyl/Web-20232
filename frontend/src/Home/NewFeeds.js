@@ -10,7 +10,6 @@ export default function NewFeeds() {
   const [posts, setPosts] = useState([])
 
   useEffect(() => {
-    Notification.requestPermission();
     getAllPost()
       .then(res => {
         res.data.data.forEach(doc => {

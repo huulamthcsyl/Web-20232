@@ -42,7 +42,9 @@ export default function NavBar() {
           </NavDropdown>
           <Image className='border p-1 ms-4' src={notification} roundedCircle />
           <Image className='border p-1 ms-4' src={messenger} roundedCircle />
-          <Image className='border p-1 ms-4' src={friends} roundedCircle />
+          <Link to={`/friendRequest`}>
+            <Image className='border p-1 ms-4' src={friends} roundedCircle />
+          </Link>
         </Col>
       </Row>
     </Container>

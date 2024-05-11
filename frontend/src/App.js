@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignUp from "./SignUp";
 import Login from "./Login";
@@ -11,8 +11,10 @@ import DetailPost from "./posts/DetailPost";
 import NewFeeds from "./Home/NewFeeds";
 import ImageView from "./posts/ImageView";
 import { socket } from "./socket";
+import FriendRequest from "./FriendRequest";
 
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>
@@ -24,6 +26,7 @@ function App() {
           <Route index element={<NewFeeds />} />
           <Route path="profile/:id" element={<Profile />}/>
           <Route path="/post/:id" element={<DetailPost />} />
+          <Route path="/friendRequest" element={<FriendRequest />}/>
         </Route>
         <Route path="/post/:postId/image" element={<ImageView />} />
       </Routes>

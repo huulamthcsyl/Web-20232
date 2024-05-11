@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import Layout from './Layout'
+import { socket } from './socket'
 
 /**
  * Renders a private route component based on the presence of a user ID in the local storage.

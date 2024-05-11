@@ -16,11 +16,13 @@ export default function ConversationPanel({ conversation, conversations, setConv
   // Send message to server
   const handleSendMessage = () => {
     socket.emit('sendMessage', {
+      sentUsername: localStorage.getItem('username'),
       sentUserId: localStorage.getItem('userId'),
       receivedUserId: conversation.receivedUserId,
       content: message
     });
     setListMessages([...listMessages, {
+      sentUsername: localStorage.getItem('username'),
       sentUserId: localStorage.getItem('userId'),
       receivedUserId: conversation.receivedUserId,
       content: message
@@ -28,23 +30,11 @@ export default function ConversationPanel({ conversation, conversations, setConv
     setMessage("");
   }
 
-  // Receive message from server
-  const receiveMessage = (msg) => {
-    if(msg.receivedUserId === conversation.sentUserId && msg.sentUserId === conversation.receivedUserId){ 
-      setListMessages([...listMessages, msg]);
+  socket.on('receiveMessage', message => {
+    if(message.sentUserId === conversation.receivedUserId) {
+      setListMessages([...listMessages, message]);
     }
-  }
-
-  useEffect(() => {
-    // Check if user has new message
-    if(listMessages.length !== 0 && listMessages[listMessages.length - 1].sentUserId !== localStorage.getItem('userId')){
-      let notification = new Notification(`Bạn có tin nhắn từ ${receivedUserProfile.firstName + " " + receivedUserProfile.lastName}`, {
-        body: listMessages[listMessages.length - 1].content
-      });
-    }
-  }, [listMessages]);
-
-  socket.on('receiveMessage', receiveMessage);
+  })
 
   useEffect(() => {
     // Fetch user profile from API
@@ -68,7 +58,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
       <Container className='border rounded-2 p-1 mb-2' style={{height: '300px', overflowY: 'scroll'}}>
         {listMessages.map((msg, index) => (
           <Container key={index} className='border rounded-2 p-1 mb-1'>
-            <h6>{msg.sentUserId === localStorage.getItem('userId') ? 'Bạn' : receivedUserProfile?.firstName + " " + receivedUserProfile?.lastName}</h6>
+            <h6>{msg.sentUsername}</h6>
             <p>{msg.content}</p>
           </Container>
         ))}

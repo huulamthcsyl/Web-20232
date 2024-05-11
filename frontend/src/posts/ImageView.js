@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Row, Col, Image, Button } from 'react-bootstrap'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getPostById, getProfileByUserId, likePost, removeLikePost } from '../services/API';
+import { getPostById, getProfileByUserId, removeLikePost } from '../services/API';
+import { socket } from '../socket'
 import heart from '../assets/icons/heart.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
@@ -34,7 +35,12 @@ export default function ImageView() {
       removeLikePost(localStorage.getItem('userId'), postId);
       setLikeCount(likeCount => likeCount - 1);
     } else {
-      likePost(localStorage.getItem('userId'), postId);
+      socket.emit("likePost", {
+        nameUserLike: localStorage.getItem('username'),
+        userId: localStorage.getItem('userId'),
+        postId: post.id,
+        postUserId: post.userId
+      })
       setLikeCount(likeCount => likeCount + 1);
     }
   }

@@ -12,8 +12,27 @@ export default function Layout() {
   const [conversations, setConversations] = useState([]);
 
   useEffect(() => {
+    Notification.requestPermission();
+    // Configure socket.io connection
+    socket.io.opts.query = {
+      userId: localStorage.getItem('userId')
+    }
     socket.connect();
-  }, []);
+    socket.on('likePost', data => {
+      const { nameUserLike } = data
+      new Notification(`${nameUserLike} đã thích bài viết của bạn`)
+    })
+    socket.on('receiveMessage', data => {
+      const { content, sentUsername } = data
+      new Notification(`Bạn có tin nhắn mới từ ${sentUsername}`, {
+        body: content
+      })
+    })
+    return () => {
+      socket.off('likePost')
+      socket.off('receiveMessage')
+    }
+  }, [socket])
 
   return (
     <Container fluid className='p-0 position-relative'>
