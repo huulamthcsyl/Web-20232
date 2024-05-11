@@ -234,11 +234,11 @@ export const createNotification = async (req) => {
     const postId = req.postId
     const isRead = false
     const type = req.type
-    const userId = req.userId
+    const postUserId = req.postUserId
     const promises = []
 
     Promise.all(promises).then(()=>{
-        setDoc(collection(db, "posts", userId), {
+        setDoc(collection(db, "posts", postUserId), {
             sentUserId: sentUserId,
             postId: postId,
             isRead: isRead,

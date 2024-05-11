@@ -41,16 +41,16 @@ export default function configureSocket(server) {
 
         // notify on post liked
         socket.on('createComment', (request) => {
-            socket.to(request.postId.userId).emit('createComment', request);
-            // createNotification(request).then()
+            socket.to(request.postUserId).emit('createComment', request);
+            createNotification(request).then()
             createPostBelongToPost(request).then()
         });
 
         // notify on post liked
         socket.on('likePost', (request) => {
             socket.to(request.postUserId).emit('likePost', request);
-            // createNotification(request)
-            likePost(request)
+            createNotification(request).then()
+            likePost(request).then()
         });
 
         // xóa id khi offline
