@@ -7,7 +7,8 @@ import {
     getAllPost,
     getPostByPostId,
     likePost,
-    removeLikePost
+    removeLikePost,
+    getCommentByPostId
 } from '../controllers/postController.js'
 
 const router = express.Router()
@@ -17,6 +18,7 @@ router.post('/createPost', upload.fields([{name: 'image'}, {name: 'video'}]), cr
 router.get('/getAllPost', getAllPost)
 router.get('/getPostByUserId/:userId', getPostByUserId)
 router.get('/getPostByPostId/:postId', getPostByPostId)
+router.get('/getCommentByPostId/:postId', getCommentByPostId)
 router.post('/likePost/:userId/:postId', likePost)
 router.post('/removeLikePost/:userId/:postId', removeLikePost)
 

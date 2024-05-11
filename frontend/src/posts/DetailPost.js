@@ -7,6 +7,7 @@ import heart from '../assets/icons/heart.png'
 import heart_red from '../assets/icons/heart_red.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
+import CommentSection from '../components/CommentSection';
 
 export default function DetailPost() {
 
@@ -17,6 +18,7 @@ export default function DetailPost() {
   const [dateCreated, setDateCreated] = useState();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
 
   let getUserInfo = (post) => {
     getProfileByUserId(post.userId)
@@ -53,12 +55,13 @@ export default function DetailPost() {
         setPost(res.data.data);
         setIsLiked(res.data.data.likedList.includes(localStorage.getItem('userId')));
         setLikeCount(res.data.data.likedList.length);
+        setCommentCount(res.data.data.comments.length);
         getUserInfo(res.data.data);
       })
       .catch(error => {
         console.log(error)
       })
-  }, [])
+  }, [id])
 
   return (
     post && 
@@ -96,7 +99,7 @@ export default function DetailPost() {
             </Col>
             <Col className='d-flex'>
             <Image className='me-2' src={comment} />
-              <p className='align-self-center m-0'>5 bình luận</p>
+              <p className='align-self-center m-0'>{commentCount} bình luận</p>
             </Col>
             <Col className='d-flex'>
             <Image className='me-2' src={share} />
@@ -105,6 +108,7 @@ export default function DetailPost() {
           </Container>
         </Card.Footer>
       </Card>
+      <CommentSection postId={id} />
     </Container>
   )
 }

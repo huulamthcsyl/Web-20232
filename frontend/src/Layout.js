@@ -28,6 +28,10 @@ export default function Layout() {
         body: content
       })
     })
+    socket.on('createComment', data => {
+      const { nameUserComment } = data
+      new Notification(`${nameUserComment} đã bình luận bài viết của bạn`)
+    })
     return () => {
       socket.off('likePost')
       socket.off('receiveMessage')

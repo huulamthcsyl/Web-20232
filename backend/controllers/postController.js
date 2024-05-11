@@ -7,7 +7,8 @@ import {
     arrayUnion,
     arrayRemove,
     Timestamp,
-    updateDoc, setDoc
+    updateDoc, setDoc,
+    where
 } from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
@@ -48,6 +49,8 @@ export const createPost = async (req, res) => {
             video: videoStorageURL,
             userId: userId,
             likedList: [],
+            comments: [],
+            isComment: false,
             dateCreated: Timestamp.fromDate(new Date())
         }).then((docRef) => {
             res.status(200).json({
@@ -59,7 +62,9 @@ export const createPost = async (req, res) => {
                     video: videoStorageURL,
                     userId: userId,
                     likedList: [],
+                    comments: [],
                     id: docRef.id,
+                    isComment: false,
                     dateCreated: Timestamp.fromDate(new Date())
                 }
             })
@@ -101,7 +106,7 @@ export const getAllPost = async (req, res) => {
     let posts = []
     const querySnapshot = await getDocs(collection(db, "posts"))
     querySnapshot.forEach((doc) => {
-        posts.push({id: doc.id, data: doc.data()})
+        if (!doc.data().isComment) posts.push({id: doc.id, data: doc.data()})
     })
 
     if (querySnapshot.empty) {
@@ -201,10 +206,10 @@ export const removeLikePost = async (req, res) => {
     }
 }
 
-export const createPostBelongToPost = async (req) => {
-    const body = req.body.body
-    const postId = req.body.postId
-    const userId = req.body.userId
+export const createComment = async (req) => {
+    const body = req.content
+    const postId = req.postId
+    const userId = req.userId
 
     const promises = []
 
@@ -218,14 +223,28 @@ export const createPostBelongToPost = async (req) => {
             // video: videoStorageURL,
             userId: userId,
             likedList: [],
+            comments: [],
+            isComment: true,
             dateCreated: Timestamp.fromDate(new Date())
         }).then((docRef) => {
             // Add comment id to post's comment list
             const parentPostRef = doc(db, "posts", postId)
             updateDoc(parentPostRef, {
-                comment: arrayUnion(docRef.id)
+                comments: arrayUnion(docRef.id)
             })
         })
+    })
+}
+
+export const getCommentByPostId = async (req, res) => {
+    const postId = req.params.postId
+
+    const postRef = doc(db, "posts", postId)
+    const comments = (await getDoc(postRef)).data().comments
+
+    res.status(200).json({
+        message: `Found comments for post ${postId}.`,
+        data: comments
     })
 }
 

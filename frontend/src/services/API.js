@@ -40,6 +40,10 @@ export function removeLikePost(userId, postId) {
     return axios.post(`${API_BASE_URL}/removeLikePost/${userId}/${postId}`)
 }
 
+export function getCommentByPostId(postId) {
+    return axios.get(`${API_BASE_URL}/getCommentByPostId/${postId}`)
+}
+
 export function getAllUser() {
     return axios.get(`${API_BASE_URL}/getAllUser`)
 }

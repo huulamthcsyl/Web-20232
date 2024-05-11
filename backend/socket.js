@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { saveMessage } from "./controllers/chatController.js";
-import { likePost, createPostBelongToPost, createNotification } from "./controllers/postController.js";
+import { likePost, createNotification, createComment } from "./controllers/postController.js";
 
 export default function configureSocket(server) {
     const io = new Server(server, {
@@ -41,9 +41,9 @@ export default function configureSocket(server) {
 
         // notify on post liked
         socket.on('createComment', (request) => {
-            socket.to(request.postId.userId).emit('createComment', request);
+            socket.to(request.userId).emit('createComment', request);
             // createNotification(request).then()
-            createPostBelongToPost(request).then()
+            createComment(request)
         });
 
         // notify on post liked

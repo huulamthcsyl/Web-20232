@@ -15,6 +15,7 @@ export default function Post({ post }) {
   const [dateCreated, setDateCreated] = useState();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     getProfileByUserId(post.userId)
@@ -27,6 +28,7 @@ export default function Post({ post }) {
     );
     setIsLiked(post.likedList.includes(localStorage.getItem('userId')));
     setLikeCount(post.likedList.length);
+    setCommentCount(post.comments.length);
     setDateCreated(fireBaseTime.toLocaleTimeString('vi-VN') + " " + fireBaseTime.toLocaleDateString('vi-VN'))
   }, [post])
 
@@ -80,7 +82,7 @@ export default function Post({ post }) {
           </Col>
           <Col className='d-flex'>
             <Image className='me-2' src={comment} />
-            <p className='align-self-center m-0'>5 bình luận</p>
+            <p className='align-self-center m-0'>{commentCount} bình luận</p>
           </Col>
           <Col className='d-flex'>
             <Image className='me-2' src={share} />
