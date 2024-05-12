@@ -41,7 +41,7 @@ export default function DetailPost() {
       socket.emit("likePost", {
         nameUserLike: localStorage.getItem('username'),
         userId: localStorage.getItem('userId'),
-        postId: post.id,
+        postId: id,
         postUserId: post.userId
       })
       setLikeCount(likeCount => likeCount + 1);

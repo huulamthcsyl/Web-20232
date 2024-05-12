@@ -73,7 +73,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
       <Container className='border rounded-2 p-1 mb-2' style={{height: '300px', overflowY: 'scroll'}}>
         {listMessages.map((msg, index) => (
           <Container key={index} className='border rounded-2 p-1 mb-1'>
-            <h6>{msg.sentUsername}</h6>
+            <h6>{msg.sentUserId === localStorage.getItem("userId") ? "Bạn" : msg.sentUsername}</h6>
             <p>{msg.content}</p>
           </Container>
         ))}

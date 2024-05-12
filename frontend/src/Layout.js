@@ -35,6 +35,7 @@ export default function Layout() {
     return () => {
       socket.off('likePost')
       socket.off('receiveMessage')
+      socket.off('createComment')
     }
   }, [socket])
 
