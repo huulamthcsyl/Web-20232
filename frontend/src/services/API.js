@@ -55,3 +55,7 @@ export function markConversationAsRead(data) {
 export function getAllUser() {
     return axios.get(`${API_BASE_URL}/getAllUser`)
 }
+
+export function getNotificationByUserId(userId) {
+    return axios.get(`${API_BASE_URL}/getNotificationByUserId/${userId}`)
+}

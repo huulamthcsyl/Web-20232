@@ -39,7 +39,7 @@ export default function DetailPost() {
       setLikeCount(likeCount => likeCount - 1);
     } else {
       socket.emit("likePost", {
-        nameUserLike: localStorage.getItem('username'),
+        sentUsername: localStorage.getItem('username'),
         userId: localStorage.getItem('userId'),
         postId: id,
         postUserId: post.userId
@@ -108,7 +108,7 @@ export default function DetailPost() {
           </Container>
         </Card.Footer>
       </Card>
-      <CommentSection postId={id} />
+      <CommentSection postId={id} postUserId={post.userId}/>
     </Container>
   )
 }

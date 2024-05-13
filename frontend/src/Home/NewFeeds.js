@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
-import Post from '../components/Post';
+import Post from '../posts/Post';
 import { CreatePost } from '../components/CreatePost';
 import { getAllPost } from '../services/API';
 import { socket } from '../socket';

@@ -3,6 +3,7 @@ import { Container, Row, Col, Image, Button } from 'react-bootstrap'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getPostById, getProfileByUserId, removeLikePost } from '../services/API';
 import { socket } from '../socket'
+import CommentSection from '../components/CommentSection'
 import heart from '../assets/icons/heart.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
@@ -36,7 +37,7 @@ export default function ImageView() {
       setLikeCount(likeCount => likeCount - 1);
     } else {
       socket.emit("likePost", {
-        nameUserLike: localStorage.getItem('username'),
+        sentUsername: localStorage.getItem('username'),
         userId: localStorage.getItem('userId'),
         postId: post.id,
         postUserId: post.userId
@@ -91,7 +92,7 @@ export default function ImageView() {
         </Button>
       </Container>
       <Container className='p-2 position-absolute top-0 end-0' style={{width: '30%'}}>
-        <Container>
+        <Container className='mb-2'>
           { userInfo &&
             <Container className='d-flex p-0 mb-2'>
               <Image className='me-2' style={{width: '50px'}} src={userInfo.avatar} roundedCircle />
@@ -119,6 +120,7 @@ export default function ImageView() {
             </Col>
           </Container>
         </Container>
+        <CommentSection postId={postId} postUserId={post.userId}/>
       </Container>
     </Container>
   )

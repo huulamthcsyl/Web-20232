@@ -39,7 +39,7 @@ export default function Post({ post }) {
       setLikeCount(likeCount => likeCount - 1);
     } else {
       socket.emit("likePost", {
-        nameUserLike: localStorage.getItem('username'),
+        sentUsername: localStorage.getItem('username'),
         userId: localStorage.getItem('userId'),
         postId: post.id,
         postUserId: post.userId

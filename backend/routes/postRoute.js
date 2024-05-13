@@ -8,7 +8,8 @@ import {
     getPostByPostId,
     likePost,
     removeLikePost,
-    getCommentByPostId
+    getCommentByPostId,
+    getNotificationByUserId
 } from '../controllers/postController.js'
 
 const router = express.Router()
@@ -21,5 +22,6 @@ router.get('/getPostByPostId/:postId', getPostByPostId)
 router.get('/getCommentByPostId/:postId', getCommentByPostId)
 router.post('/likePost/:userId/:postId', likePost)
 router.post('/removeLikePost/:userId/:postId', removeLikePost)
+router.get('/getNotificationByUserId/:userId', getNotificationByUserId)
 
 export default router

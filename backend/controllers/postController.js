@@ -249,20 +249,37 @@ export const getCommentByPostId = async (req, res) => {
 }
 
 export const createNotification = async (req) => {
-    const sentUserId = req.sentUserId
-    const postId = req.postId
-    const isRead = false
-    const type = req.type
-    const postUserId = req.postUserId
-    const promises = []
+    const notificationRef = doc(db, "notifications", req.postUserId)
+    const newNotification = {
+        sentUsername: req.sentUsername,
+        userId: req.userId,
+        postUserId: req.postUserId,
+        postId: req.postId,
+        type: req.type,
+        dateCreated: Timestamp.fromDate(new Date())
+    }
+    getDoc(notificationRef)
+    .then((doc) => {
+        if (doc.exists()) {
+            updateDoc(notificationRef, {
+                data: arrayUnion(newNotification)
+            })
+        } else {
+            setDoc(notificationRef, {
+                data: arrayUnion(newNotification)
+            })
+        }
+    })
+}
 
-    Promise.all(promises).then(()=>{
-        setDoc(collection(db, "posts", postUserId), {
-            sentUserId: sentUserId,
-            postId: postId,
-            isRead: isRead,
-            type: type,
-            dateCreated: Timestamp.fromDate(new Date())
-        }).then()
+export const getNotificationByUserId = async (req, res) => {
+    const userId = req.params.userId
+
+    const notificationRef = doc(db, "notifications", userId)
+    const notifications = (await getDoc(notificationRef)).data()
+
+    res.status(200).json({
+        message: `Found notifications for user ${userId}.`,
+        data: notifications
     })
 }

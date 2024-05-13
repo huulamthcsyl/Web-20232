@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Form, Row, Col, Image, NavDropdown } from 'react-bootstrap'
 import notification from '../assets/icons/notification.png'
 import messenger from '../assets/icons/messenger.png'
@@ -7,12 +7,13 @@ import user from '../assets/icons/user.png'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/icons/logo.png'
 import { socket } from '../socket'
+import NotificationsContainer from './NotificationsContainer'
 
 /**
  * Represents the navigation bar component.
  * @returns {JSX.Element} The JSX element representing the navigation bar.
  */
-export default function NavBar() {
+export default function NavBar({ doesNotificationContainerOpen, setDoesNotificationContainerOpen }) {
 
   const navigate = useNavigate()
 
@@ -40,7 +41,7 @@ export default function NavBar() {
           <NavDropdown title={<Image src={user} className='border p-1 ms-4' roundedCircle />} id="basic-nav-dropdown">
             <NavDropdown.Item onClick={handleLogout}>Đăng xuất</NavDropdown.Item>
           </NavDropdown>
-          <Image className='border p-1 ms-4' src={notification} roundedCircle />
+          <Image style={{cursor: 'pointer'}} className='border p-1 ms-4' src={notification} roundedCircle onClick={() => setDoesNotificationContainerOpen(!doesNotificationContainerOpen)}/>
           <Image className='border p-1 ms-4' src={messenger} roundedCircle />
           <Link to={`/friendRequest`}>
             <Image className='border p-1 ms-4' src={friends} roundedCircle />

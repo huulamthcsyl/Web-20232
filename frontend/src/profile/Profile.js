@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Col, Row, Form, Button, Image, Text, Stack, Tab, Tabs, NavLink, Overlay , Modal } from 'react-bootstrap'
-import camera from './assets/icons/camera.png'
-import NewFeeds from './Home/NewFeeds'
+import NewFeeds from '../Home/NewFeeds'
 import { Link } from 'react-router-dom'
-import ProfileSideBar from './components/ProfileSideBar';
+import ProfileSideBar from '../components/ProfileSideBar';
 import UpdateProfile from './UpdateProfile';
-import { getProfileByUserId } from './services/API'
+import { getProfileByUserId } from '../services/API'
 
 
 export default function Profile() {
