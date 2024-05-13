@@ -226,11 +226,11 @@ export const findUser = async (req, res) => {
 // POST /createFriendRequest
 export const createFriendRequest = async (req, res) => {
   const friendRequest = {
-    userId: req.body.userId,
-    friendId: req.body.friendId,
+    sentUserId: req.body.userId,
+    receivedUserId: req.body.friendId,
     status: false
   };
-  let id = friendRequest.userId + "-" + friendRequest.friendId;
+  let id = friendRequest.sentUserId + "-" + friendRequest.receivedUserId;
   setDoc(doc(db, "friendRequests", id), friendRequest)
     .then(() => {
       res.status(200).json({
@@ -288,6 +288,32 @@ export const acceptFriendRequest = async (req, res) => {
       message: error.message
     });
   }
+}
+
+// POST /declineFriendRequest
+export const declineFriendRequest = async (req, res) => {
+  const id = req.body.friendId + "-" + req.body.userId;
+  deleteDoc(doc(db, "friendRequests", id))
+    .then(() => res.status(200).json({
+      status: true,
+    }))
+    .catch(error => res.status(400).json({
+      status: false,
+      message: error.message
+    }))
+}
+
+// GET /getAllFriendRequests/:userId
+export const getAllFriendRequests = async (req, res) => {
+  const q = query(collection(db, "friendRequests"), where("receivedUserId", "==", req.params.userId));
+  let id = [];
+  const data = await getDocs(q);
+  data.forEach((friendRequest) => {
+    id.push(friendRequest.data().sentUserId);
+  });
+  res.status(200).json({
+    id
+  });
 }
 
 // GET /getFriendList/:userId
