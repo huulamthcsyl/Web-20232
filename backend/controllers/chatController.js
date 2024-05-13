@@ -181,14 +181,12 @@ export const getUnreadConversations = async (req, res) => {
   await Promise.all(
     data.docs.map(async (conversation) => {
       const messagesCollection = collection(conversation.ref, "messages");
-      const messages = await getDocs(messagesCollection);
-      let isRead = true;
-      messages.docs.forEach((message) => {
-        if (!message.data().isRead && message.data().receivedUserId == userId) {
-          isRead = false;
-        }
-      });
-      if (!isRead) {
+      const q = query(messagesCollection,
+        where("receivedUserId", "==", userId),
+        where("isRead", "==", false)
+      )
+      const messages = await getDocs(q);
+      if (!messages.empty) {
         id.push(conversation.id);
       }
     })
@@ -203,17 +201,30 @@ export const markConversationAsRead = async (req, res) => {
   let id = (req.body.userId < req.body.friendId) ? 
     (req.body.userId + '-' + req.body.friendId) :
     (req.body.friendId + '-' + req.body.userId);
-  let data = await getDocs(collection(doc(db, "conversations", id), "messages"));
-  await Promise.all(
-    data.docs.map(async (message) => {
-      if (message.data().receivedUserId == req.body.userId && !message.data().isRead){
+  const messagesCollection = collection(doc(db, "conversations", id), "messages");
+  const q = query(messagesCollection, 
+    where("receivedUserId", "==", req.body.userId),
+    where("isRead", "==", false)
+  )
+  let data = await getDocs(q);
+  if (!data.empty) {
+    await Promise.all(
+      data.docs.map(async (message) => {
+        console.log(message.data());
         await updateDoc(message.ref, {
           isRead: true
         })
-      }
-    })
-  );
-  res.status(200).json({
-    status: true
-  });
+      })
+    );
+    res.status(200).json({
+      status: true,
+      message: "Cập nhật thành công"
+    });
+  }
+  else {
+    res.status(200).json({
+      status: true,
+      message: "Không cập nhật gì"
+    });
+  }
 }
