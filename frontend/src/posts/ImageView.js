@@ -19,6 +19,7 @@ export default function ImageView() {
   let location = useLocation();
   const [imagePosition, setImagePosition] = useState();
   const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const navigate = useNavigate();
 
@@ -58,6 +59,7 @@ export default function ImageView() {
       .then(res => {
         setPost(res.data.data)
         setIsLiked(res.data.data.likedList.includes(localStorage.getItem('userId')))
+        setCommentCount(res.data.data.comments.length)
         setLikeCount(res.data.data.likedList.length)
         getProfileByUserId(res.data.data.userId)
           .then(res => {
@@ -112,7 +114,7 @@ export default function ImageView() {
             </Col>
             <Col className='d-flex'>
             <Image className='me-2' src={comment} />
-              <p className='align-self-center m-0'>5 bình luận</p>
+              <p className='align-self-center m-0'>{commentCount} bình luận</p>
             </Col>
             <Col className='d-flex'>
             <Image className='me-2' src={share} />
