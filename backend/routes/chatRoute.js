@@ -6,7 +6,8 @@ import {
     getUnreadMessages,
     getConversationMessages,
     getUnreadConversations,
-    markConversationAsRead
+    markConversationAsRead,
+    getAllConversationByUserId
 } from '../controllers/chatController.js';
 
 const router = express.Router()
@@ -16,6 +17,7 @@ router.post('/sendMessage', upload.fields([
     { name: 'video' },
     { name: 'image' }
     ]), sendMessage);
+router.get('/getAllConversationByUserId/:userId', upload.none(), getAllConversationByUserId);
 router.get('/getUnreadMessages/:userId', upload.none(), getUnreadMessages);
 router.get('/getConversationMessages/:userId/:friendId', upload.none(), getConversationMessages);
 router.get('/getUnreadConversations/:userId', upload.none(), getUnreadConversations);

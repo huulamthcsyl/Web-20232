@@ -44,6 +44,10 @@ export function getCommentByPostId(postId) {
     return axios.get(`${API_BASE_URL}/getCommentByPostId/${postId}`)
 }
 
+export function getAllConversationByUserId(userId) {
+    return axios.get(`${API_BASE_URL}/getAllConversationByUserId/${userId}`)
+}
+
 export function getConversationMessages(userId, friendId) {
     return axios.get(`${API_BASE_URL}/getConversationMessages/${userId}/${friendId}`)
 }

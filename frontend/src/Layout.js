@@ -4,14 +4,16 @@ import { Outlet } from 'react-router-dom'
 import ProfileCard from './Home/ProfileCard'
 import { Container } from 'react-bootstrap'
 import FriendList from './Home/FriendList'
-import ConversationsContainer from './ConversationsContainer'
+import ConversationsContainer from './conversation/ConversationsContainer'
 import { socket } from './socket'
-import NotificationsContainer from './components/NotificationsContainer'
+import NotificationsContainer from './notification/NotificationsContainer'
+import ConversationList from './conversation/ConversationList'
 
 export default function Layout() {
 
   const [conversations, setConversations] = useState([]);
   const [doesNotificationContainerOpen, setDoesNotificationContainerOpen] = useState(false);
+  const [doseMessageListOpen, setDoseMessageListOpen] = useState(false);
 
   useEffect(() => {
     Notification.requestPermission();
@@ -43,7 +45,12 @@ export default function Layout() {
 
   return (
     <Container fluid className='p-0 position-relative'>
-      <NavBar doesNotificationContainerOpen={doesNotificationContainerOpen} setDoesNotificationContainerOpen={setDoesNotificationContainerOpen} />
+      <NavBar 
+        doesNotificationContainerOpen={doesNotificationContainerOpen} 
+        setDoesNotificationContainerOpen={setDoesNotificationContainerOpen} 
+        doseMessageListOpen={doseMessageListOpen}
+        setDoseMessageListOpen={setDoseMessageListOpen}
+      />
       <Container className='p-0 pt-2 position-relative' fluid>
         <Container className='p-0 position-fixed' style={{ width: '20%', top: '75px', left: '0px' }}>
           <ProfileCard />
@@ -56,6 +63,7 @@ export default function Layout() {
         </Container>
       </Container>
       {doesNotificationContainerOpen && <NotificationsContainer />}
+      {doseMessageListOpen && <ConversationList conversations={conversations} setConversations={setConversations}/>}
       <ConversationsContainer conversations={conversations} setConversations={setConversations}/>
     </Container>
   )

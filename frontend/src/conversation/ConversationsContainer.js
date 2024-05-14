@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
-import ConversationPanel from './components/ConversationPanel'
+import ConversationPanel from './ConversationPanel'
 
 export default function ConversationsContainer({ conversations, setConversations}) {
 

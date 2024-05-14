@@ -125,31 +125,29 @@ export const saveMessage = async (message) => {
   let id = id1 + '-' + id2;
   const conservationDoc = doc(db, "conversations", id);
   const data = await getDoc(conservationDoc);
+  const newMessage = {
+    sentUsername: message.sentUsername,
+    sentUserId: message.sentUserId,
+    receivedUserId: message.receivedUserId,
+    content: message.content,
+    createdAt: Timestamp.fromDate(new Date()),
+    isRead: false
+  };
   if (data.exists()) {
     const messageCollection = collection(data.ref, "messages");
-    await addDoc(messageCollection, {
-      sentUsername: message.sentUsername,
-      sentUserId: message.sentUserId,
-      receivedUserId: message.receivedUserId,
-      content: message.content,
-      createdAt: Timestamp.fromDate(new Date()),
-      isRead: false
-    }); 
+    await updateDoc(conservationDoc, {
+      lastMessage: newMessage,
+    })
+    await addDoc(messageCollection, newMessage); 
   }
   else {
     await setDoc(doc(db, "conversations", id), {
       id1,
-      id2
+      id2,
+      lastMessage: newMessage
     });
     const messageCollection = collection(doc(db, "conversations", id), "messages");
-    await addDoc(messageCollection, {
-      sentUsername: message.sentUsername,
-      sentUserId: message.sentUserId,
-      receivedUserId: message.receivedUserId,
-      content: message.content,
-      createdAt: Timestamp.fromDate(new Date()),
-      isRead: false
-    }); 
+    await addDoc(messageCollection, newMessage); 
   }
 }
 
@@ -164,6 +162,22 @@ export const getConversationMessages = async (req, res) => {
   messages.sort((a, b) => a.createdAt - b.createdAt);
   res.status(200).json({
     messages
+  });
+}
+
+export const getAllConversationByUserId = async (req, res) => {
+  const q = query(collection(db, "conversations"),
+    or(
+      where('id1', '==', req.params.userId),
+      where('id2', '==', req.params.userId)
+    ),
+    orderBy('lastMessage.createdAt', 'desc')
+  );
+  const data = await getDocs(q);
+  let conversations = [];
+  data.forEach(conversation => conversations.push(conversation.data()));
+  res.status(200).json({
+    conversations
   });
 }
 
