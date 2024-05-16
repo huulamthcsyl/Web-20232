@@ -11,6 +11,7 @@ import DetailPost from "./posts/DetailPost";
 import NewFeeds from "./Home/NewFeeds";
 import ImageView from "./posts/ImageView";
 import FriendRequest from "./FriendRequest";
+import SearchResult from "./SearchResult";
 
 function App() {
 
@@ -23,9 +24,10 @@ function App() {
           // Redirect to login page if user is not logged in
         <Route path="/" element={<PrivateRoute />}>
           <Route index element={<NewFeeds />} />
-          <Route path="profile/:id" element={<Profile />} />
+          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/post/:id" element={<DetailPost />} />
           <Route path="/friendRequest" element={<FriendRequest />} />
+          <Route path="search" element={<SearchResult />} />
         </Route>
         <Route path="/post/:postId/image" element={<ImageView />} />
       </Routes>

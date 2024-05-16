@@ -7,6 +7,7 @@ import user from '../assets/icons/user.png'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/icons/logo.png'
 import { socket } from '../socket'
+import SearchBar from './SearchBar'
 
 /**
  * Represents the navigation bar component.
@@ -31,9 +32,10 @@ export default function NavBar({ doesNotificationContainerOpen, setDoesNotificat
             <Link className='me-2 mt-1' to={'/'}>
               <Image src={logo} style={{ width: '40px' }} />
             </Link>
-            <Form>
+            {/* <Form>
               <Form.Control className='rounded-pill' type="text" placeholder="Tìm kiếm" style={{ height: '50px' }} />
-            </Form>
+            </Form> */}
+            <SearchBar/>
           </Container>
         </Col>
         <Col className='d-flex flex-row-reverse'>
