@@ -21,6 +21,7 @@ import {
   signOut  
 } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { sendNotificationEmail } from "./sendEmail.js"
 
 // POST /register
 export const register = async (req, res, next) => {
@@ -31,6 +32,7 @@ export const register = async (req, res, next) => {
     .then((userCredential) => {
       setDoc(doc(db, "profiles", userCredential.user.uid), {})
         .then(() => {
+          sendNotificationEmail(email)
           res.status(200).json({
             status: true,
             user: userCredential.user,
