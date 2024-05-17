@@ -4,17 +4,20 @@ import { Container, Form, Button, Image } from 'react-bootstrap';
 import { getAllUser } from '../services/API';
 import search from '../assets/icons/search.png'
 
-function SearchBar({ placeholder, data }) {
+function SearchBar() {
 
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (query) {
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    if (query != "") {
       navigate({
-        pathname: 'search',
+        pathname: "search",
         search: createSearchParams({ q: query }).toString()
       })
+      window.location.reload();
     } else {
       alert("Please enter some search text!");
     }
@@ -22,7 +25,7 @@ function SearchBar({ placeholder, data }) {
 
   return (
     <Container className='searchInputs d-flex'>
-      <Form id='Search' className="justify-content-center">
+      <Form id='Search' onSubmit={handleSubmit} className="justify-content-center">
         <Form.Control
           className='rounded-pill' type="text" placeholder="Tìm kiếm"
           style={{ height: '50px' }}
@@ -30,14 +33,8 @@ function SearchBar({ placeholder, data }) {
         />
       </Form>
       <Button
-        className='border-0 bg-primary p-0'
-        onClick={() => {
-          if (query != "")
-            navigate({
-              pathname: "search",
-              search: createSearchParams({ q: query }).toString()
-            })
-        }}>
+        className='border-0 bg-transparent p-0'
+        onClick={handleSubmit}>
         <Image className='align-middle' src={search} style={{ height: 30, width: 30 }} />
       </Button>
     </Container>

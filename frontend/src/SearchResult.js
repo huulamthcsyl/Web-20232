@@ -2,36 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Image, Button, Nav } from 'react-bootstrap'
 import { useSearchParams, useParams, Link } from 'react-router-dom'
 import { getAllUser } from './services/API';
+import { findUser } from './services/API';
 
 export default function SearchResult() {
-  ;
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [userList, setUserList] = useState([])
+
+  const [searchParams] = useSearchParams()
+
+  const [resultList, setResultList] = useState([])
 
   const query = searchParams.get('q')
 
-  const getFilteredItems = (query, items) => {
-    if (!query) {
-      return items;
-    }
-    return items.filter((user) => user.firstName.includes(query));
-  };
-
   useEffect(() => {
-    getAllUser()
+    findUser(query)
       .then(res => {
-        setUserList(res.data.users);
+        setResultList(res.data.users);
       })
       .catch(err => {
         console.log(err);
       });
   }, [])
 
-  const filteredItems = getFilteredItems(query, userList);
-
   return (
     <Container className='position-relative'>
-      {filteredItems.map((user) => (
+      {resultList.map((user) => (
         <Container
           className='p-3 m-3 border rounded shadow-sm position-relative start-50 translate-middle-x d-flex'
           style={{ height: 100, width: 500 }}
