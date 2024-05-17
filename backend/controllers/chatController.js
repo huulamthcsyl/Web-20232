@@ -221,14 +221,14 @@ export const markConversationAsRead = async (req, res) => {
     where("isRead", "==", false)
   )
   let data = await getDocs(q);
-  const lastMessage = data.docs[data.docs.length - 1];
-  await updateDoc(doc(db, "conversations", id), {
-    lastMessage: {
-      ...lastMessage,
-      isRead: true
-    }
-  });
   if (!data.empty) {
+    const lastMessage = data.docs[data.docs.length - 1].data();
+    await updateDoc(doc(db, "conversations", id), {
+      lastMessage: {
+        ...lastMessage,
+        isRead: true
+      }
+    });
     await Promise.all(
       data.docs.map(async (message) => {
         await updateDoc(message.ref, {
