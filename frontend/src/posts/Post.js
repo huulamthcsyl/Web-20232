@@ -53,8 +53,12 @@ export default function Post({ post }) {
       <Card.Header>
         <Container className='d-flex justify-content-between p-0'>
           <Col className='d-flex'>
-            <img src={avatarImgLink} alt='avatar' style={{ width: '40px', borderRadius: '50%' }} />
-            <h5 className='align-self-center ms-2'>{name}</h5>
+            <img src={avatarImgLink} alt='avatar' style={{ width: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+            <Link to={`/profile/${post.userId}`} style={{textDecoration: 'none', color: 'black'}} className='align-self-center ms-2'>
+              <h5 className='m-0'>
+                {name}
+              </h5>
+            </Link>
           </Col>
           <Col className='d-flex flex-row-reverse'>
             <p className='align-self-center m-0'>Tạo lúc: {dateCreated}</p>

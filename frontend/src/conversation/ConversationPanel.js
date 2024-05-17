@@ -35,7 +35,6 @@ export default function ConversationPanel({ conversation, conversations, setConv
       userId: localStorage.getItem('userId'),
       friendId: conversation.receivedUserId
     })
-    console.log('Marked as read')
   }
 
   socket.on('receiveMessage', message => {

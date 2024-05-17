@@ -8,7 +8,7 @@ import {
     arrayRemove,
     Timestamp,
     updateDoc, setDoc,
-    where
+    where, deleteDoc
 } from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
@@ -144,6 +144,127 @@ export const getPostByPostId = async (req, res) => {
     })
 }
 
+export const updatePost = async (req, res) => {
+    const body = req.body.body
+    const imageFile = req.files["image"] ? req.files["image"] : null
+    const videoFile = req.files["video"] ? req.files["video"] : null
+    const postId = req.params.postId;
+
+    const storage = getStorage();
+    let imageStorageURL = []
+    let videoStorageURL = ""
+    const promises = []
+
+    if (imageFile) {
+        for (let i = 0; i < imageFile.length; i++) {
+            const imageStorageRef = ref(storage, `/postImage/${userId}/${Randomstring.generate()}+${imageFile[i].originalname}`)
+            promises.push(uploadBytes(imageStorageRef, imageFile[i].buffer, {contentType: imageFile[i].mimetype}).then(async (snapshot) => {
+                imageStorageURL.push(await getDownloadURL(imageStorageRef))
+            }))
+        }
+    }
+
+    if (videoFile) {
+        const videoStorageRef = ref(storage, `/postVideo/${userId}/${Randomstring.generate()}+${videoFile[0].originalname}`)
+        promises.push(uploadBytes(videoStorageRef, videoFile[0].buffer, {contentType: videoFile[0].mimetype}).then(async (snapshot) => {
+            videoStorageURL = await getDownloadURL(videoStorageRef)
+        }))
+    }
+
+    // Sau khi tất cả các promise đã được resolve thì thực hiện thêm dữ liệu vào firestore
+    Promise.all(promises).then(() => {
+        let docSnap
+        const docRef = doc(db, "posts", postId)
+        getDoc(docRef).then((doc) => {
+            docSnap = doc.data()
+        })
+
+        // form-data
+        updateDoc(docRef, {
+            body: body,
+            image: imageStorageURL,
+            video: videoStorageURL,
+        }).then(() => {
+            res.status(200).json({
+                status: true,
+                message: "Cập nhật bài đăng thành công.",
+                post: {
+                    body: body,
+                    image: imageStorageURL,
+                    video: videoStorageURL,
+                    likedList: docSnap.likedList,
+                    comments: docSnap.comments,
+                    id: docRef.id,
+                    isComment: false,
+                    dateCreated: Timestamp.fromDate(new Date())
+                }
+            })
+        }).catch((error) => {
+            res.status(400).json({
+                status: false,
+                message: error.message
+            })
+        })
+    })
+}
+
+export const deletePost = async (req, res) => {
+    const postId = req.params.postId
+    const postRef = doc(db, "posts", postId)
+
+    try {
+        await deleteDoc(postRef)
+        res.status(200).json({
+            message: `Post with id ${postId} deleted`
+        })
+    } catch (e) {
+        res.status(400).json({
+            message: `Failed to delete post with id ${postId}`
+        })
+    }
+}
+
+export const sharePost = async (req, res) => {
+    const sharedPostId = req.params.postId
+    const body = req.body.body
+    const userId = req.body.userId
+
+    addDoc(collection(db, "posts"), {
+        body: body,
+        userId: userId,
+        sharedPostId: sharedPostId,
+        likedList: [],
+        comments: [],
+        isComment: false,
+        dateCreated: Timestamp.fromDate(new Date())
+    }).then(async (docRef) => {
+        let sharedPost
+        const sharedPostRef = doc(db, "posts", sharedPostId)
+        await getDoc(sharedPostRef).then((doc) => {
+            sharedPost = doc.data()
+        })
+
+        res.status(200).json({
+            status: true,
+            message: "Chia sẻ bài đăng thành công.",
+            post: {
+                body: body,
+                userId: userId,
+                likedList: [],
+                comments: [],
+                id: docRef.id,
+                sharedPost: sharedPost,
+                isComment: false,
+                dateCreated: Timestamp.fromDate(new Date())
+            }
+        })
+    }).catch((error) => {
+        res.status(400).json({
+            status: false,
+            message: error.message
+        })
+    })
+}
 export const likePost = async (req) => {
     const userId = req.userId
     const postId = req.postId
