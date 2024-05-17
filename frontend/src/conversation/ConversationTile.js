@@ -5,6 +5,7 @@ import { getProfileByUserId } from '../services/API';
 export function ConversationTile({ conversation, conversations, setConversations }) {
 
   const [userProfile, setUserProfile] = useState();
+  const [friendId, setFriendId] = useState();
 
   const handleNewConversation = (receivedUserId) => {
     // Check if conversation already exists
@@ -19,17 +20,24 @@ export function ConversationTile({ conversation, conversations, setConversations
   };
 
   useEffect(() => {
-    getProfileByUserId(conversation.lastMessage.sentUserId)
+    let fId;
+    if(conversation.id1 === localStorage.getItem('userId')) {
+      fId = conversation.id2;
+    } else {
+      fId = conversation.id1;
+    }
+    setFriendId(fId);
+    getProfileByUserId(fId)
       .then(res => {
         setUserProfile(res.data.user);
       })
       .catch(err => {
         console.log(err);
       });
-  }, [conversation.sentUserId]);
+  }, [conversation]);
 
   return (
-    userProfile && <Container className='d-flex p-0' onClick={() => handleNewConversation(conversation.lastMessage.sentUserId)}>
+    userProfile && <Container className='d-flex p-0' onClick={() => handleNewConversation(friendId)}>
       <img src={userProfile?.avatar} alt={userProfile?.username} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
       <Container className='d-flex'>
         <Container className='p-0'>
