@@ -6,6 +6,7 @@ import {
     getPostByUserId,
     getAllPost,
     getPostByPostId,
+    updatePost,
     likePost,
     removeLikePost,
     getCommentByPostId,
@@ -19,6 +20,7 @@ router.post('/createPost', upload.fields([{name: 'image'}, {name: 'video'}]), cr
 router.get('/getAllPost', getAllPost)
 router.get('/getPostByUserId/:userId', getPostByUserId)
 router.get('/getPostByPostId/:postId', getPostByPostId)
+router.post('/updatePost/:postId', updatePost)
 router.get('/getCommentByPostId/:postId', getCommentByPostId)
 router.post('/likePost/:userId/:postId', likePost)
 router.post('/removeLikePost/:userId/:postId', removeLikePost)
