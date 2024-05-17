@@ -54,7 +54,7 @@ export default function Profile() {
         />
         <Container >
           <p className='ps-5' style={{ fontSize: 33, fontWeight: 'bold' }}>{profile.firstName + " " + profile.lastName}</p>
-          //<NavLink className='ps-5' as='a' to="/friends" >??? friends</NavLink>
+          {/* <NavLink className='ps-5' as='a' to="/friends" >??? friends</NavLink> */}
         </Container>
       </Container>
       <Container style={{ width: 1000 }}>
