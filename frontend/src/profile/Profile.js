@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Col, Row, Form, Button, Image, Tab, Tabs, NavLink} from 'react-bootstrap'
+import { Container, Col, Row, Form, Button, Image, Tab, Tabs, NavLink } from 'react-bootstrap'
 import NewFeeds from '../Home/NewFeeds'
 import { Link, useParams } from 'react-router-dom'
 import ProfileSideBar from '../components/ProfileSideBar';
 import UpdateProfile from './UpdateProfile';
-import { getProfileByUserId } from '../services/API'
+import { createFriendRequest, getProfileByUserId } from '../services/API'
+import add_friend from '../assets/icons/add_friend.png'
 
 
 export default function Profile() {
@@ -34,8 +35,16 @@ export default function Profile() {
           style={{ width: 1000, height: 350, objectFit: 'cover' }}
           fluid
         />
-        {id==localStorage.getItem('userId')?<UpdateProfile/>:<Button>WIP</Button>}
-        
+        {id == localStorage.getItem('userId') ?
+          <UpdateProfile /> :
+          <Button
+            variant='primary'
+            style={{ position: 'absolute', bottom: 10, right: 20 }}
+            onClick={() => { createFriendRequest({ userId: localStorage.getItem('userId'), friendId: id }) }}
+          >
+            <Image src={add_friend} style={{ width: 20, marginRight: 10 }}></Image>
+            Kết bạn
+          </Button>}
       </Container>
       <Container className='d-flex mt-3' style={{ width: 1000, position: 'relative' }} fluid>
         <Image
@@ -45,32 +54,18 @@ export default function Profile() {
         />
         <Container >
           <p className='ps-5' style={{ fontSize: 33, fontWeight: 'bold' }}>{profile.firstName + " " + profile.lastName}</p>
-          <NavLink className='ps-5' as='a' to="/friends" >??? friends</NavLink>
+          //<NavLink className='ps-5' as='a' to="/friends" >??? friends</NavLink>
         </Container>
       </Container>
       <Container style={{ width: 1000 }}>
-        <Tabs
-          defaultActiveKey="posts"
-          id="uncontrolled-tab-example"
-          className="mb-3"
-        >
-          <Tab eventKey="posts" title="Posts">
-            <Row>
-              <Col className='m-0 w-25'>
-              <ProfileSideBar userId={id}/>
-              </Col>
-              <Col style={{width: '75%'}}>
-                <NewFeeds />
-              </Col>
-            </Row>
-          </Tab>
-          <Tab eventKey="about" title="About">
-          </Tab>
-          <Tab eventKey="friends" title="Friends">
-          </Tab>
-          <Tab eventKey="media" title="Media">
-          </Tab>
-        </Tabs>
+        <Row>
+          <Col className='m-0 w-25'>
+            <ProfileSideBar userId={id} />
+          </Col>
+          <Col className='w-75'>
+            <NewFeeds />
+          </Col>
+        </Row>
       </Container>
     </Container>
   )
