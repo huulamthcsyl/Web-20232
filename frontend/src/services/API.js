@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' ? "https://web-20232.onrender.com" : "http://localhost:5000";
+//const API_BASE_URL = process.env.NODE_ENV === 'production' ? "https://web-20232.onrender.com" : "http://localhost:5000";
+
+const API_BASE_URL = "https://web-20232.onrender.com"
 
 export function register(email, password) {
     return axios.post(`${API_BASE_URL}/register`, {
@@ -62,4 +64,24 @@ export function getAllUser() {
 
 export function getNotificationByUserId(userId) {
     return axios.get(`${API_BASE_URL}/getNotificationByUserId/${userId}`)
+}
+
+export function findUser(query) {
+    return axios.get(`${API_BASE_URL}/findUser?name=${query}`)
+}
+
+export function createFriendRequest(data) {
+    return axios.post(`${API_BASE_URL}/createFriendRequest`, data)
+}
+
+export function acceptFriendRequest(data) {
+    return axios.post(`${API_BASE_URL}/acceptFriendRequest`, data)
+}
+
+export function declineFriendRequest(data) {
+    return axios.post(`${API_BASE_URL}/declineFriendRequest`, data)
+}
+
+export function getAllFriendRequest(userId) {
+    return axios.get(`${API_BASE_URL}/getAllFriendRequest/${userId}`)
 }

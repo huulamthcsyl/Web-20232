@@ -52,23 +52,23 @@ export default function UpdateProfile() {
     <>
       <Button variant="light" onClick={handleShow} style={{ position: 'absolute', bottom: 10, right: 20 }}>
         <Image src={pen} style={{ width: 20, marginRight: 10 }}></Image>
-        Edit Profile
+        Chỉnh Sửa Profile
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit profile</Modal.Title>
+          <Modal.Title>Chỉnh sửa profile</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form id='updateProfilePopup' onSubmit={handleSubmit}>
 
             <Form.Group className='mb-2'>
-              <Form.Label>Avatar</Form.Label>
+              <Form.Label>Ảnh đại diện</Form.Label>
               <Form.Control onChange={e => setAvatar(e.target.files[0])} type="file" />
             </Form.Group>
             
             <Form.Group className='mb-2'>
-              <Form.Label>Cover</Form.Label>
+              <Form.Label>Ảnh tường</Form.Label>
               <Form.Control onChange={e => setCover(e.target.files[0])} type="file" placeholder='Tên' />
             </Form.Group>
             
@@ -76,47 +76,47 @@ export default function UpdateProfile() {
 
             <Row className="mb-3">
               <Form.Group as={Col} >
-                <Form.Label>First Name</Form.Label>
+                <Form.Label>Tên</Form.Label>
                 <Form.Control value={firstName} onChange={e => setFirstName(e.target.value)} type="text" placeholder="First name" />
               </Form.Group>
 
               <Form.Group as={Col} >
-                <Form.Label>Last Name</Form.Label>
+                <Form.Label>Họ & Đệm</Form.Label>
                 <Form.Control value={lastName} onChange={e => setLastName(e.target.value)} type="text" placeholder="Last name" />
               </Form.Group>
             </Row>
 
             <Form.Group className="mb-3" >
-              <Form.Label>Description</Form.Label>
+              <Form.Label>Mô tả</Form.Label>
               <Form.Control value={description} onChange={e => setDescription(e.target.value)} placeholder="Description" />
             </Form.Group>
 
             <Form.Group className="mb-3" >
-              <Form.Label>Date of Birth</Form.Label>
+              <Form.Label>Ngày sinh</Form.Label>
               <Form.Control value={DOB} onChange={e => setDOB(e.target.value)} placeholder="Date of birth" />
             </Form.Group>
 
             <Form.Group className="mb-3" >
-              <Form.Label>Address</Form.Label>
+              <Form.Label>Địa chỉ</Form.Label>
               <Form.Control value={address} onChange={e => setAddress(e.target.value)} placeholder="Address" />
             </Form.Group>
 
             <Row className="mb-3">
               <Form.Group as={Col} >
-                <Form.Label>Occupation</Form.Label>
+                <Form.Label>Nghề nghiệp</Form.Label>
                 <Form.Control value={work} onChange={e => setWork(e.target.value)} />
               </Form.Group>
 
               <Form.Group as={Col} >
-                <Form.Label>School/Workplace</Form.Label>
+                <Form.Label>Trường học/Cơ quan</Form.Label>
                 <Form.Control value={school} onChange={e => setSchool(e.target.value)} />
               </Form.Group>
 
               <Form.Group as={Col} >
-                <Form.Label>Gender</Form.Label>
+                <Form.Label>Giới tính</Form.Label>
                 <Form.Select defaultValue="">
-                  <option>Male</option>
-                  <option>Female</option>
+                  <option>Nam</option>
+                  <option>Nữ</option>
                 </Form.Select>
               </Form.Group>
             </Row>
@@ -128,10 +128,10 @@ export default function UpdateProfile() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            Đóng
           </Button>
           <Button form='updateProfilePopup' variant="primary" type='submit'>
-            Save Changes
+            Lưu thay đổi
           </Button>
         </Modal.Footer>
       </Modal>
