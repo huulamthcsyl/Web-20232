@@ -40,7 +40,7 @@ export default function ImageView() {
       socket.emit("likePost", {
         sentUsername: localStorage.getItem('username'),
         userId: localStorage.getItem('userId'),
-        postId: post.id,
+        postId: postId,
         postUserId: post.userId
       })
       setLikeCount(likeCount => likeCount + 1);
