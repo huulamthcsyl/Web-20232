@@ -4,12 +4,12 @@ import user from '../assets/icons/user.png'
 import { Link } from 'react-router-dom'
 import { getProfileByUserId } from '../services/API'
 
-function ProfileSideBar() {
+function ProfileSideBar({userId}) {
 
   const [profile, setProfile] = useState();
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId')
+    // const userId = localStorage.getItem('userId')
     // Fetch user profile from API
     getProfileByUserId(userId)
       .then(res => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Col, Row, Form, Button, Image, Text, Stack, Tab, Tabs, NavLink, Overlay , Modal } from 'react-bootstrap'
+import { Container, Col, Row, Form, Button, Image, Tab, Tabs, NavLink} from 'react-bootstrap'
 import NewFeeds from '../Home/NewFeeds'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import ProfileSideBar from '../components/ProfileSideBar';
 import UpdateProfile from './UpdateProfile';
 import { getProfileByUserId } from '../services/API'
@@ -9,12 +9,13 @@ import { getProfileByUserId } from '../services/API'
 
 export default function Profile() {
 
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState()
+  const { id } = useParams()
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId')
+    // const userId = localStorage.getItem('userId')
     // Fetch user profile from API
-    getProfileByUserId(userId)
+    getProfileByUserId(id)
       .then(res => {
         setProfile(res.data.user)
       })
@@ -33,11 +34,8 @@ export default function Profile() {
           style={{ width: 1000, height: 350, objectFit: 'cover' }}
           fluid
         />
-        {/* <Button onClick={openPopup} variant='light' style={{ position: 'absolute', bottom: 10, right: 20 }}>
-          <Image src={camera} style={{ width: 20, marginRight: 10 }}></Image>
-          Edit cover photo
-        </Button> */}
-        <UpdateProfile/>
+        {id==localStorage.getItem('userId')?<UpdateProfile/>:<Button>WIP</Button>}
+        
       </Container>
       <Container className='d-flex mt-3' style={{ width: 1000, position: 'relative' }} fluid>
         <Image
@@ -45,9 +43,9 @@ export default function Profile() {
           src={profile.avatar}
           style={{ width: 200, height: 200, position: 'relative', top: -100, left: 30, objectFit: 'cover' }}
         />
-        <Container className='row'>
+        <Container >
           <p className='ps-5' style={{ fontSize: 33, fontWeight: 'bold' }}>{profile.firstName + " " + profile.lastName}</p>
-          <NavLink className='ps-5' as={Link} to="/friends" >??? friends</NavLink>
+          <NavLink className='ps-5' as='a' to="/friends" >??? friends</NavLink>
         </Container>
       </Container>
       <Container style={{ width: 1000 }}>
@@ -59,7 +57,7 @@ export default function Profile() {
           <Tab eventKey="posts" title="Posts">
             <Row>
               <Col className='m-0 w-25'>
-              <ProfileSideBar />
+              <ProfileSideBar userId={id}/>
               </Col>
               <Col style={{width: '75%'}}>
                 <NewFeeds />
