@@ -237,10 +237,10 @@ export const sharePost = async (req, res) => {
         comments: [],
         isComment: false,
         dateCreated: Timestamp.fromDate(new Date())
-    }).then((docRef) => {
+    }).then(async (docRef) => {
         let sharedPost
         const sharedPostRef = doc(db, "posts", sharedPostId)
-        getDoc(sharedPostRef).then((doc) => {
+        await getDoc(sharedPostRef).then((doc) => {
             sharedPost = doc.data()
         })
 
