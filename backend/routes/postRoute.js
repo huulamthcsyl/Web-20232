@@ -7,6 +7,7 @@ import {
     getAllPost,
     getPostByPostId,
     updatePost,
+    deletePost,
     likePost,
     removeLikePost,
     getCommentByPostId,
@@ -21,6 +22,7 @@ router.get('/getAllPost', getAllPost)
 router.get('/getPostByUserId/:userId', getPostByUserId)
 router.get('/getPostByPostId/:postId', getPostByPostId)
 router.post('/updatePost/:postId', updatePost)
+router.post('/deletePost/:postId', deletePost)
 router.get('/getCommentByPostId/:postId', getCommentByPostId)
 router.post('/likePost/:userId/:postId', likePost)
 router.post('/removeLikePost/:userId/:postId', removeLikePost)

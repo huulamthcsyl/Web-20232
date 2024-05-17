@@ -8,7 +8,7 @@ import {
     arrayRemove,
     Timestamp,
     updateDoc, setDoc,
-    where
+    where, deleteDoc
 } from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
@@ -208,6 +208,63 @@ export const updatePost = async (req, res) => {
     })
 }
 
+export const deletePost = async (req, res) => {
+    const postId = req.params.postId
+    const postRef = doc(db, "posts", postId)
+
+    try {
+        await deleteDoc(postRef)
+        res.status(200).json({
+            message: `Post with id ${postId} deleted`
+        })
+    } catch (e) {
+        res.status(400).json({
+            message: `Failed to delete post with id ${postId}`
+        })
+    }
+}
+
+export const sharePost = async (req, res) => {
+    const sharedPostId = req.params.postId
+    const body = req.body.body
+    const userId = req.body.userId
+
+    addDoc(collection(db, "posts"), {
+        body: body,
+        userId: userId,
+        sharedPostId: sharedPostId,
+        likedList: [],
+        comments: [],
+        isComment: false,
+        dateCreated: Timestamp.fromDate(new Date())
+    }).then((docRef) => {
+        let sharedPost
+        const sharedPostRef = doc(db, "posts", sharedPostId)
+        getDoc(sharedPostRef).then((doc) => {
+            sharedPost = doc.data()
+        })
+
+        res.status(200).json({
+            status: true,
+            message: "Chia sẻ bài đăng thành công.",
+            post: {
+                body: body,
+                userId: userId,
+                likedList: [],
+                comments: [],
+                id: docRef.id,
+                sharedPost: sharedPost,
+                isComment: false,
+                dateCreated: Timestamp.fromDate(new Date())
+            }
+        })
+    }).catch((error) => {
+        res.status(400).json({
+            status: false,
+            message: error.message
+        })
+    })
+}
 export const likePost = async (req) => {
     const userId = req.userId
     const postId = req.postId
