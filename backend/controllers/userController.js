@@ -225,6 +225,40 @@ export const findUser = async (req, res) => {
   });
 }
 
+// GET /findFriend/:userId?name=...
+export const findFriend = async (req, res) => {
+  // lấy friendList
+  const userProfileDoc = await getDoc(doc(db, "profiles", req.params.userId));
+  const friendList = userProfileDoc.data().friendList;
+  if (friendList) {
+    // tạo dữ liệu cho việc tìm kiếm
+    let profiles = [];
+    const options = {
+      keys: ['firstName', 'lastName'],
+      threshold: 0.5
+    };
+    // Lấy profile của các id trong friendList
+    const promises = friendList.map(async (id) => {
+      const profileDoc = await getDoc(doc(db, "profiles", id));
+      return profileDoc.data();
+    });
+    profiles = await Promise.all(promises);
+    const fuse = new Fuse(profiles, options);
+    let result = fuse.search(req.query.name);
+    result = result.map((obj) => obj.item);
+  
+    res.status(200).json({
+      users: result
+    });
+  }
+  else {
+    res.status(200).json({
+      users: []
+    })
+  }
+  
+}
+
 // POST /createFriendRequest
 export const createFriendRequest = async (req, res) => {
   const friendRequest = {

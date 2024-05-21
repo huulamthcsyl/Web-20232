@@ -13,7 +13,8 @@ import {
   getFriendList,
   getAllUser,
   declineFriendRequest,
-  getAllFriendRequests
+  getAllFriendRequests,
+  findFriend
 } from '../controllers/userController.js';
 
 const router = express.Router();
@@ -34,5 +35,6 @@ router.post('/acceptFriendRequest', upload.none(), acceptFriendRequest);
 router.get('/getFriendList/:userId', upload.none(), getFriendList);
 router.post('/declineFriendRequest', upload.none(), declineFriendRequest);
 router.get('/getAllFriendRequests/:userId', upload.none(), getAllFriendRequests);
+router.get('/findFriend/:userId', upload.none(), findFriend);
 
 export default router;
