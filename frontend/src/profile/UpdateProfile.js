@@ -52,12 +52,12 @@ export default function UpdateProfile() {
     <>
       <Button variant="light" onClick={handleShow} style={{ position: 'absolute', bottom: 10, right: 20 }}>
         <Image src={pen} style={{ width: 20, marginRight: 10 }}></Image>
-        Chỉnh Sửa Profile
+        Chỉnh sửa hồ sơ
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Chỉnh sửa profile</Modal.Title>
+          <Modal.Title>Chỉnh sửa hồ sơ</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form id='updateProfilePopup' onSubmit={handleSubmit}>

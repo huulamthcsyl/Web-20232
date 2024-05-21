@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap';
-import { getAllUser } from '../services/API';
+import { getFriendList } from '../services/API';
 
 export default function FriendList({ conversations, setConversations}) {
 
@@ -8,7 +8,7 @@ export default function FriendList({ conversations, setConversations}) {
 
   useEffect(() => {
     // Fetch friend list from API
-    getAllUser()
+    getFriendList(localStorage.getItem('userId'))
       .then(res => {
         setFriends(res.data.users);
       })

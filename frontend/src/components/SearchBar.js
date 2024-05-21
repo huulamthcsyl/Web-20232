@@ -32,11 +32,6 @@ function SearchBar() {
           onChange={(e) => setQuery(e.target.value)}
         />
       </Form>
-      <Button
-        className='border-0 bg-transparent p-0'
-        onClick={handleSubmit}>
-        <Image className='align-middle' src={search} style={{ height: 30, width: 30 }} />
-      </Button>
     </Container>
   )
 }

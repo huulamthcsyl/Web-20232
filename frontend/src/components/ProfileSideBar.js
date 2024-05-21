@@ -18,18 +18,20 @@ function ProfileSideBar({userId}) {
       .catch(err => {
         console.log(err)
       })
-  }, [])
+  }, [userId])
 
   return (
-    profile && <Container className='p-3 m-0 border rounded shadow-sm' style={{ width: "150%" }}>
-      <h5> User infomation</h5>
-      {profile.description && <p><span className='fw-semibold'>Description: </span>{profile.description}</p>}
+    profile && <Container className='p-3 m-0 border rounded shadow-sm' style={{ width: "100%" }}>
+      <h4>Mô tả bản thân</h4>
+      {profile.description && <p><span className='fw-semibold'>Giới thiệu: </span>{profile.description}</p>}
 
-      {profile.address && <p><span className='fw-semibold'>Lives in: </span>{profile.address}</p>}
+      {profile.address && <p><span className='fw-semibold'>Nơi ở: </span>{profile.address}</p>}
 
-      {profile.DOB && <p><span className='fw-semibold'>Birth date: </span>{profile.DOB}</p>}
+      {profile.DOB && <p><span className='fw-semibold'>Ngày sinh: </span>{profile.DOB}</p>}
 
-      {profile.school && <p><span className='fw-semibold'>Work at: </span>{profile.school} {profile.work && <><span className='fw-semibold'>as </span>{profile.work}</>}</p>}
+      {profile.school && <p><span className='fw-semibold'>Học tại: </span>{profile.school}</p>}
+
+      {profile.work && <p><span className='fw-semibold'>Làm việc tại: </span>{profile.work}</p>}
 
       {/* <Image className='border' src={profile.avatar} style={{width: '80px'}} roundedCircle />
         <h5 className='align-self-center m-0 ms-2'>{profile.firstName + " " + profile.lastName}</h5> */}

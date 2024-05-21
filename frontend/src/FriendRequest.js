@@ -1,7 +1,57 @@
-import React, { Image, useState, useEffect, Button } from 'react'
+import React, { Image, useState, useEffect } from 'react'
 import { acceptFriendRequest, declineFriendRequest, getAllFriendRequest, getProfileByUserId } from './services/API'
 import { Link } from 'react-router-dom'
-import { Container } from 'react-bootstrap'
+import { Container, Button } from 'react-bootstrap'
+import { toast } from 'react-toastify';
+
+function FriendTile({ friendId, friendRequests, setFriendRequests }){
+
+  const [friendProfile, setFriendProfile] = useState();
+
+  const handleAcceptFriendRequest = (friendId) => {
+    acceptFriendRequest({ userId: localStorage.getItem('userId'), friendId: friendId })
+    .then(res => {
+      console.log("Add")
+      toast.success("Thêm bạn mới thành công")
+      setFriendRequests(friendRequests.filter(id => id !== friendId))
+    })
+    .catch(e => {
+
+    })
+  }
+
+  const handleDeclineFriendRequest = (friendId) => {
+    declineFriendRequest({ userId: localStorage.getItem('userId'), friendId: friendId })
+    .then(res => {
+      console.log("Remove")
+      toast.success("Xoá lời mời kết bạn thành công")
+      setFriendRequests(friendRequests.filter(id => id !== friendId))
+    })
+    .catch(err => {
+
+    })
+  }
+
+  useEffect(() => {
+    getProfileByUserId(friendId)
+    .then(res => {
+      setFriendProfile(res.data.user)
+    })
+    .catch(e => {
+      console.log(e)
+    })
+  }, [friendId])
+
+  return (
+    friendProfile && 
+    <Container className='p-0 m-0 border me-2' style={{width: 120}}>
+      <img src={friendProfile.avatar} style={{width: 120}}/>
+      <h5>{friendProfile.firstName + " " + friendProfile.lastName}</h5>
+      <Button className='mb-2' onClick={() => handleAcceptFriendRequest(friendId)}>Chấp nhận</Button>
+      <Button className='btn-danger' onClick={() => handleDeclineFriendRequest(friendId)}>Từ chối</Button>
+    </Container>
+  )
+}
 
 export default function FriendRequest() {
 
@@ -18,37 +68,14 @@ export default function FriendRequest() {
       });
   }, [])
 
-  const senders = 0;
 
   return (
     <Container>
-      <div>Friend requests</div>
-      <Container className='d-flex'>
-        {senders.map((sender) => {
-          <Container
-            className='p-3 m-3 border rounded shadow-sm position-relative start-50 translate-middle-x d-flex'
-            style={{ height: 250, width: 150 }}
-          >
-            <Link className='p-0 text-decoration-none text-dark' to={`/profile/${sender.id}`}>
-              <Image
-                className='m-0 p-0 border border-white rounded-top'
-                src={sender.avatar}
-                style={{ height: 150, width: 150, objectFit: 'cover' }}
-              />
-              <h5 className='m-1'>{sender.firstName + " " + sender.lastName}</h5>
-            </Link>
-            <Button
-              variant='primary'
-              style={{ position: 'absolute', bottom: 10, right: 20 }}
-              onClick={() => { acceptFriendRequest({ userId: localStorage.getItem('userId'), friendId: sender.id }) }}
-            > Đồng ý </Button>
-            <Button
-              variant='light'
-              style={{ position: 'absolute', bottom: 10, right: 20 }}
-              onClick={() => { declineFriendRequest({ userId: localStorage.getItem('userId'), friendId: sender.id }) }}
-            > Từ chối </Button>
-          </Container>
-        })}
+      <h1>Lời mời kết bạn</h1>
+      <Container className='p-0 d-flex'>
+        {friendRequests.map((friendId, index) => (
+          <FriendTile key={index} friendId={friendId} friendRequests={friendRequests} setFriendRequests={setFriendRequests}/>
+        ))}
       </Container>
     </Container>
   )

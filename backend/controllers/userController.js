@@ -230,7 +230,6 @@ export const createFriendRequest = async (req, res) => {
   const friendRequest = {
     sentUserId: req.body.userId,
     receivedUserId: req.body.friendId,
-    status: false
   };
   let id = friendRequest.sentUserId + "-" + friendRequest.receivedUserId;
   setDoc(doc(db, "friendRequests", id), friendRequest)
@@ -277,7 +276,7 @@ export const acceptFriendRequest = async (req, res) => {
     }
     // cập nhật trạng thái của lời mời kết bạn thành đã chấp nhận
     let id = req.body.friendId + "-" + req.body.userId;
-    updateDoc(doc(db, "friendRequests", id), {status: true});
+    await deleteDoc(doc(db, "friendRequests", id));
     // 
     res.status(200).json({
       status: true,

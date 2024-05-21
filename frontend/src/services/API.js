@@ -37,6 +37,10 @@ export function getPostById(id) {
     return axios.get(`${API_BASE_URL}/getPostByPostId/${id}`)
 }
 
+export function getPostByUserId(userId){
+    return axios.get(`${API_BASE_URL}/getPostByUserId/${userId}`)
+}
+
 export function removeLikePost(userId, postId) {
     return axios.post(`${API_BASE_URL}/removeLikePost/${userId}/${postId}`)
 }
@@ -82,5 +86,9 @@ export function declineFriendRequest(data) {
 }
 
 export function getAllFriendRequest(userId) {
-    return axios.get(`${API_BASE_URL}/getAllFriendRequest/${userId}`)
+    return axios.get(`${API_BASE_URL}/getAllFriendRequests/${userId}`)
+}
+
+export function getFriendList(userId) {
+    return axios.get(`${API_BASE_URL}/getFriendList/${userId}`)
 }

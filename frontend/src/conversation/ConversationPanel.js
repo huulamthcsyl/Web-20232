@@ -63,7 +63,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
   
 
   return (
-    <Container className='border p-1 rounded-2 m-0 mb-3 bg-white' style={{width: '300px'}}>
+    receivedUserProfile && <Container className='border p-1 rounded-2 m-0 mb-3 bg-white' style={{width: '300px'}}>
       <Container className='d-flex'>
         <img src={receivedUserProfile?.avatar} alt='avatar' style={{ width: '40px', borderRadius: '50%' }} />
         <h5 className='align-self-center ms-2'>{receivedUserProfile?.firstName + " " + receivedUserProfile?.lastName}</h5>
