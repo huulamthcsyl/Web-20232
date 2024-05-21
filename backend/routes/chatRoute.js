@@ -7,7 +7,8 @@ import {
     getConversationMessages,
     getUnreadConversations,
     markConversationAsRead,
-    getAllConversationByUserId
+    getAllConversationByUserId,
+    getMessagesConversationByOffset
 } from '../controllers/chatController.js';
 
 const router = express.Router()
@@ -20,6 +21,7 @@ router.post('/sendMessage', upload.fields([
 router.get('/getAllConversationByUserId/:userId', upload.none(), getAllConversationByUserId);
 router.get('/getUnreadMessages/:userId', upload.none(), getUnreadMessages);
 router.get('/getConversationMessages/:userId/:friendId', upload.none(), getConversationMessages);
+router.get('/getMessagesConversationByOffset/:userId/:friendId', upload.none(), getMessagesConversationByOffset);
 router.get('/getUnreadConversations/:userId', upload.none(), getUnreadConversations);
 router.post('/markConversationAsRead', upload.none(), markConversationAsRead);
   

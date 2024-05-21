@@ -11,7 +11,11 @@ import {
     updateDoc,
     doc,
     setDoc,
-    orderBy
+    orderBy,
+    startAt,
+    limit,
+    startAfter,
+    getCountFromServer
   } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import db from '../firebase.js';
@@ -151,7 +155,7 @@ export const saveMessage = async (message) => {
   }
 }
 
-// GET /getConversationMessages
+// GET /getConversationMessages/:userId/:friendId
 export const getConversationMessages = async (req, res) => {
   let id = (req.params.userId < req.params.friendId) ? 
     (req.params.userId + '-' + req.params.friendId) :
@@ -165,6 +169,38 @@ export const getConversationMessages = async (req, res) => {
   });
 }
 
+// GET /getMessagesConversationByOffset/:userId/:friendId?start=...&offset=...
+export const getMessagesConversationByOffset = async (req, res) => {
+  let id = (req.params.userId < req.params.friendId) ? 
+    (req.params.userId + '-' + req.params.friendId) :
+    (req.params.friendId + '-' + req.params.userId);
+  let { start, offset } = req.query;
+  start = parseInt(start); offset = parseInt(offset);
+  const messageCollection = collection(doc(db, "conversations", id), "messages");
+  let q;
+  if (start > 0) {
+    q = query(messageCollection, orderBy('createdAt', 'desc'), limit(start));
+    const startDoc = await getDocs(q);
+    const lastDoc = startDoc.docs[startDoc.docs.length - 1];
+    // console.log(lastDoc.data());
+    q = query(messageCollection, orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(offset));
+  }
+  else {
+    q = query(messageCollection, orderBy('createdAt', 'desc'), limit(offset));
+  }
+  const data = await getDocs(q);
+  let messages = [];
+  data.forEach(message => messages.push(message.data()));
+  const getCount = await getCountFromServer(messageCollection);
+  const count = getCount.data().count;
+  const haveMore = ((start + offset) < count);
+  res.status(200).json({
+    messages,
+    haveMore
+  });
+}
+
+// GET /getAllConversationByUserId/:userId
 export const getAllConversationByUserId = async (req, res) => {
   const q = query(collection(db, "conversations"),
     or(
