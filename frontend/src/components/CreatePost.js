@@ -26,7 +26,6 @@ export function CreatePost({ posts, setPosts }) {
     setIsLoading(isLoading => !isLoading);
     e.preventDefault();
     // Tạo formData để gửi dữ liệu lên server
-    console.log(isLoading)
     const formData = new FormData();
     formData.append('body', body);
     selectedImage.forEach((image) => {

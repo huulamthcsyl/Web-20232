@@ -8,6 +8,7 @@ import heart_red from '../assets/icons/heart_red.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
 import CommentSection from '../components/CommentSection';
+import ImageSlideShow from './ImageSlideShow';
 
 export default function DetailPost() {
 
@@ -82,13 +83,7 @@ export default function DetailPost() {
           <Card.Text>
             {post.body}
           </Card.Text>
-          <Container className='d-flex justify-content-start mb-2 p-0' style={{overflowX: 'auto'}}>
-            {post.image && post.image.map((image, index) => (
-              <Link className='p-0 me-3' to={`image`} state={{imagePosition: index}}>
-                <Image key={index} src={image} style={{ maxWidth: '300px'}} className='p-0 border' />
-              </Link>
-            ))}
-          </Container>
+          {post.image && <ImageSlideShow images={post.image} />}
           {post.video && <video className='border' src={post.video} controls width="100%" />}
         </Card.Body>
         <Card.Footer>

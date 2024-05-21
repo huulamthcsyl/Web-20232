@@ -64,7 +64,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
 
   return (
     receivedUserProfile && <Container className='border p-1 rounded-2 m-0 mb-3 bg-white' style={{width: '300px'}}>
-      <Container className='d-flex'>
+      <Container className='d-flex p-0'>
         <img src={receivedUserProfile?.avatar} alt='avatar' style={{ width: '40px', borderRadius: '50%' }} />
         <h5 className='align-self-center ms-2'>{receivedUserProfile?.firstName + " " + receivedUserProfile?.lastName}</h5>
         <Button variant='danger' className='ms-auto' onClick={handleCloseMessage}>X</Button>
@@ -78,7 +78,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
         ))}
       </Container>
       <Container className='p-0 d-flex'>
-        <input value={message} onChange={e => setMessage(e.target.value)} type='text' className='form-control' onKeyDown={e => {
+        <input value={message} onChange={e => setMessage(e.target.value)} type='text' className='form-control me-2' onKeyDown={e => {
           if(e.key === 'Enter') handleSendMessage();
         }} onFocus={handleMarkConversationAsRead}/>
         <Button variant='primary' className='mt-2' onClick={handleSendMessage}>Gửi</Button>

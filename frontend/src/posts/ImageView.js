@@ -10,6 +10,7 @@ import share from '../assets/icons/share.png'
 import prevArrow from '../assets/icons/prev-arrow.png'
 import nextArrow from '../assets/icons/next-arrow.png'
 import heart_red from '../assets/icons/heart_red.png'
+import backIcon from '../assets/icons/back_icon.png'
 
 export default function ImageView() {
 
@@ -85,12 +86,12 @@ export default function ImageView() {
         <Button className='bg-dark text-white border-0 text-decoration-none' style={{position: 'absolute', top: '10px', width: '10px', left: '10px'}} onClick={() => navigate(-1)}>
           X
         </Button>
-        <Button className='p-0 border-0 align-self-center ms-3 btn-light' style={{width: '30px'}} onClick={handlePreviousImage}>
-          <Image src={prevArrow} />
+        <Button className='p-0 border-0 align-self-center ms-3' style={{width: '30px', background: 'transparent'}} onClick={handlePreviousImage}>
+          <Image style={{width: '30px'}} src={backIcon} />
         </Button>
         <Image className='object-fit-scale' src={post.image[imagePosition]} style={{maxHeight: '100vh', maxWidth: '90%'}}/>
-        <Button className='p-0 border-0 align-self-center me-2 btn-light' style={{width: '30px'}} onClick={handleNextImage}>
-          <Image src={nextArrow} />
+        <Button className='p-0 border-0 align-self-center me-2' style={{width: '30px', background: 'transparent'}} onClick={handleNextImage}>
+          <Image style={{width: '30px', transform: 'rotate(180deg)'}} src={backIcon} />
         </Button>
       </Container>
       <Container className='p-2 position-absolute top-0 end-0' style={{width: '30%'}}>
