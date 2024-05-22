@@ -47,7 +47,6 @@ export default function CommentSection({ postUserId, postId }) {
       postUserId: postUserId,
       content: newComment
     })
-    getAllComments()
     setNewComment('')
   }
 

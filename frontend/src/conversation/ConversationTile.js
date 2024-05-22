@@ -42,9 +42,12 @@ export function ConversationTile({ conversation, conversations, setConversations
       <Container className='d-flex'>
         <Container className='p-0'>
           <h5>{conversation.lastMessage.sentUsername}</h5>
-          <p>{conversation.lastMessage.content}</p>
+          <Container className='d-flex p-0'>
+            <p className='me-1'>{conversation.lastMessage.sentUserId == localStorage.getItem('userId') ? "Bạn:" : `${conversation.lastMessage.sentUsername}:`}</p>
+            <p>{conversation.lastMessage.content}</p>
+          </Container>
         </Container>
-        {!conversation.lastMessage.isRead && <Container className='bg-primary text-white rounded-2 p-1 align-self-center' style={{width: '10px', height: '10px'}}></Container>}
+        {!conversation.lastMessage.isRead && conversation.lastMessage.sentUserId != localStorage.getItem('userId') && <Container className='bg-primary text-white rounded-2 p-1 align-self-center' style={{width: '10px', height: '10px'}}></Container>}
       </Container>
     </Container>
   );

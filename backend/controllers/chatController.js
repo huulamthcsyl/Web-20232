@@ -193,10 +193,10 @@ export const getMessagesConversationByOffset = async (req, res) => {
   data.forEach(message => messages.push(message.data()));
   const getCount = await getCountFromServer(messageCollection);
   const count = getCount.data().count;
-  const haveMore = ((start + offset) < count);
+  const hasMore = ((start + offset) < count);
   res.status(200).json({
     messages,
-    haveMore
+    hasMore
   });
 }
 
@@ -254,7 +254,8 @@ export const markConversationAsRead = async (req, res) => {
   const messagesCollection = collection(doc(db, "conversations", id), "messages");
   const q = query(messagesCollection, 
     where("receivedUserId", "==", req.body.userId),
-    where("isRead", "==", false)
+    where("isRead", "==", false),
+    orderBy("createdAt", "asc")
   )
   let data = await getDocs(q);
   if (!data.empty) {
