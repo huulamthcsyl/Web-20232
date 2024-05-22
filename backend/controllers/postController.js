@@ -463,6 +463,7 @@ export const getPostByOffset = async (req, res) => {
         let hasMore = false
         res.status(200).json({
             posts: docs,
+            lastVisibleId: lastVisibleId,
             hasMore: hasMore
         })
     }
