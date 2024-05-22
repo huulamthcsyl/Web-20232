@@ -30,6 +30,6 @@ router.get('/getCommentByPostId/:postId', getCommentByPostId)
 router.post('/likePost/:userId/:postId', likePost)
 router.post('/removeLikePost/:userId/:postId', removeLikePost)
 router.get('/getNotificationByUserId/:userId', getNotificationByUserId)
-router.get("/test", getPostByOffset)
+router.get("/getPostByOffset", getPostByOffset)
 
 export default router
