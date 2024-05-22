@@ -424,15 +424,20 @@ export const getPostByOffset = async (req, res) => {
     let q
     const postsRef = collection(db, "posts");
     if (lastVisibleId === undefined) {
-        // First time call
+        // On the first call from client, req.query.lastVisibleId should be undefined.
+        // This is default implementation.
         const currentTimestamp = Timestamp.now()
+
+        // Only query posts with isComment = false, order by dateCreated descending, which means
+        // querying from latest post(s).
         q = query(postsRef,
             where("isComment", "==", false),
             orderBy("dateCreated", 'desc'),
             startAt(currentTimestamp),
             limit(offset))
     } else {
-        // Later calls...
+        // Server expects Client to include lastVisibleId in req.query in order to query posts after lastVisibleId post
+        // from previous call.
         let lastVisible
         await getDoc(doc(db, "posts", lastVisibleId)).then((doc) => {
             lastVisible = doc
