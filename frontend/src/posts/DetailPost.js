@@ -72,7 +72,9 @@ export default function DetailPost() {
           <Container className='d-flex justify-content-between p-0'>
             <Col className='d-flex'>
               <img src={avatarImgLink} alt='avatar' style={{width: '40px', borderRadius: '50%' }} />
-              <h5 className='align-self-center ms-2'>{name}</h5>
+              <Link to={`/profile/${post.userId}`} style={{textDecoration: 'none', color: 'black'}}>
+                <h5 className='align-self-center ms-2'>{name}</h5>
+              </Link>
             </Col>
             <Col className='d-flex flex-row-reverse'>
               <p className='align-self-center m-0'>Tạo lúc: {dateCreated}</p>

@@ -284,8 +284,8 @@ export const createFriendRequest = async (req, res) => {
 // GET /checkExistFriendRequest
 export const checkExistFriendRequest = async (req, res) => {
   const friendRequest = {
-    sentUserId: req.body.userId,
-    receivedUserId: req.body.friendId,
+    sentUserId: req.params.userId,
+    receivedUserId: req.params.friendId,
   };
   let id = friendRequest.sentUserId + "-" + friendRequest.receivedUserId;
   const friendRequestDoc = await getDoc(doc(db, "friendRequests", id));
@@ -329,7 +329,7 @@ export const acceptFriendRequest = async (req, res) => {
       await updateDoc(userDocument, { friendList: tmp });
     }
     // cập nhật trạng thái của lời mời kết bạn thành đã chấp nhận
-    let id = req.body.friendId + "-" + req.body.userId;
+    let id = req.body.userId + "-" + req.body.friendId;
     await deleteDoc(doc(db, "friendRequests", id));
     // 
     res.status(200).json({
@@ -347,7 +347,7 @@ export const acceptFriendRequest = async (req, res) => {
 
 // POST /declineFriendRequest
 export const declineFriendRequest = async (req, res) => {
-  const id = req.body.friendId + "-" + req.body.userId;
+  const id = req.body.userId + "-" + req.body.friendId;
   deleteDoc(doc(db, "friendRequests", id))
     .then(() => res.status(200).json({
       status: true,

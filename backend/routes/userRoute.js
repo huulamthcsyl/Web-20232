@@ -37,6 +37,6 @@ router.get('/getFriendList/:userId', upload.none(), getFriendList);
 router.post('/declineFriendRequest', upload.none(), declineFriendRequest);
 router.get('/getAllFriendRequests/:userId', upload.none(), getAllFriendRequests);
 router.get('/findFriend/:userId', upload.none(), findFriend);
-router.get('/checkExistFriendRequest', upload.none(), checkExistFriendRequest);
+router.get('/checkExistFriendRequest/:userId/:friendId', upload.none(), checkExistFriendRequest);
 
 export default router;

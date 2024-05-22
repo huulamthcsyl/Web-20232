@@ -46,7 +46,9 @@ function FriendTile({ friendId, friendRequests, setFriendRequests }){
     friendProfile && 
     <Container className='p-0 m-0 border me-2' style={{width: 120}}>
       <img src={friendProfile.avatar} style={{width: 120}}/>
-      <h5>{friendProfile.firstName + " " + friendProfile.lastName}</h5>
+      <Link to={`/profile/${friendId}`} style={{textDecoration: 'none', color: 'black'}}>
+        <h5>{friendProfile.firstName + " " + friendProfile.lastName}</h5>
+      </Link>
       <Button className='mb-2' onClick={() => handleAcceptFriendRequest(friendId)}>Chấp nhận</Button>
       <Button className='btn-danger' onClick={() => handleDeclineFriendRequest(friendId)}>Từ chối</Button>
     </Container>

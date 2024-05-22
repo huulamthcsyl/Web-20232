@@ -93,6 +93,10 @@ export function getAllFriendRequest(userId) {
     return axios.get(`${API_BASE_URL}/getAllFriendRequests/${userId}`)
 }
 
+export function checkExistFriendRequest(userId, friendId) {
+    return axios.get(`${API_BASE_URL}/checkExistFriendRequest/${userId}/${friendId}`)
+}
+
 export function getFriendList(userId) {
     return axios.get(`${API_BASE_URL}/getFriendList/${userId}`)
 }
