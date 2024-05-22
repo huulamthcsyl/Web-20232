@@ -57,6 +57,10 @@ export function getConversationMessages(userId, friendId) {
     return axios.get(`${API_BASE_URL}/getConversationMessages/${userId}/${friendId}`)
 }
 
+export function getMessagesConversationByOffset(userId, friendId, start, offset) {
+    return axios.get(`${API_BASE_URL}/getMessagesConversationByOffset/${userId}/${friendId}?start=${start}&offset=${offset}`)
+}
+
 export function markConversationAsRead(data) {
     return axios.post(`${API_BASE_URL}/markConversationAsRead`, data)
 }

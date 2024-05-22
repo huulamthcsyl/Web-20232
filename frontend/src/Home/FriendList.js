@@ -33,7 +33,7 @@ export default function FriendList({ conversations, setConversations}) {
     <Container>
       <h4>Danh sách bạn bè</h4>
       {friends.map(friend => (
-        <Container key={friend.id} className='d-flex border p-1 rounded-2 mb-3' onClick={() => handleNewMessage(friend.id)}>
+        <Container key={friend.id} className='d-flex border p-1 rounded-2 mb-3' style={{cursor: 'pointer'}} onClick={() => handleNewMessage(friend.id)}>
           <img src={friend.avatar} alt='avatar' style={{ width: '40px', borderRadius: '50%' }} />
           <h5 className='align-self-center ms-2'>{friend.firstName + " " + friend.lastName}</h5>
         </Container>

@@ -1,32 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Button, Container } from 'react-bootstrap'
-import { getConversationMessages, getProfileByUserId, markConversationAsRead } from '../services/API'
+import { Button, Container, Image } from 'react-bootstrap'
+import { getConversationMessages, getMessagesConversationByOffset, getProfileByUserId, markConversationAsRead } from '../services/API'
 import { socket } from '../socket';
+import send from '../assets/icons/send.png';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 export default function ConversationPanel({ conversation, conversations, setConversations }) {
 
   const [receivedUserProfile, setReceivedUserProfile] = useState();
   const [listMessages, setListMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [hasMore, setHasMore] = useState(true);
 
   const handleCloseMessage = () => {
     setConversations(conversations.filter(msg => msg.receivedUserId !== conversation.receivedUserId));
   }
 
+  const handleGetMoreMessages = () => {
+    getMessagesConversationByOffset(localStorage.getItem('userId'), conversation.receivedUserId, listMessages.length, 10)
+      .then(res => {
+        setListMessages([...listMessages, ...res.data.messages]);
+        setHasMore(res.data.hasMore);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   // Send message to server
   const handleSendMessage = () => {
-    socket.emit('sendMessage', {
+    if(message.length == 0) return;
+    const newMessage = {
       sentUsername: localStorage.getItem('username'),
       sentUserId: localStorage.getItem('userId'),
       receivedUserId: conversation.receivedUserId,
       content: message
-    });
-    setListMessages([...listMessages, {
-      sentUsername: localStorage.getItem('username'),
-      sentUserId: localStorage.getItem('userId'),
-      receivedUserId: conversation.receivedUserId,
-      content: message
-    }]);
+    }
+    socket.emit('sendMessage', newMessage);
+    setListMessages([newMessage, ...listMessages]);
     setMessage("");
   }
 
@@ -39,7 +50,7 @@ export default function ConversationPanel({ conversation, conversations, setConv
 
   socket.on('receiveMessage', message => {
     if(message.sentUserId === conversation.receivedUserId) {
-      setListMessages([...listMessages, message]);
+      setListMessages([message, ...listMessages]);
     }
   })
 
@@ -52,9 +63,10 @@ export default function ConversationPanel({ conversation, conversations, setConv
       .catch(err => {
         console.log(err);
       });
-    getConversationMessages(localStorage.getItem('userId'), conversation.receivedUserId)
+    getMessagesConversationByOffset(localStorage.getItem('userId'), conversation.receivedUserId, 0, 10)
       .then(res => {
         setListMessages(res.data.messages);
+        setHasMore(res.data.hasMore)
       })
       .catch(err => {
         console.log(err);
@@ -69,19 +81,30 @@ export default function ConversationPanel({ conversation, conversations, setConv
         <h5 className='align-self-center ms-2'>{receivedUserProfile?.firstName + " " + receivedUserProfile?.lastName}</h5>
         <Button variant='danger' className='ms-auto' onClick={handleCloseMessage}>X</Button>
       </Container>
-      <Container className='border rounded-2 p-1 mb-2' style={{height: '300px', overflowY: 'scroll'}}>
-        {listMessages.map((msg, index) => (
-          <Container key={index} className='border rounded-2 p-1 mb-1'>
-            <h6>{msg.sentUserId === localStorage.getItem("userId") ? "Bạn" : msg.sentUsername}</h6>
-            <p>{msg.content}</p>
-          </Container>
-        ))}
+      <Container id="message-panel" className='border rounded-2 p-1 mb-2' style={{height: '300px', overflow: 'auto', display: 'flex', flexDirection: 'column-reverse'}}>
+        <InfiniteScroll
+          dataLength={listMessages.length}
+          next={handleGetMoreMessages}
+          style={{ display: 'flex', flexDirection: 'column-reverse', overflow: 'hidden' }}
+          inverse={true}
+          hasMore={hasMore}
+          loader={<h5>Loading...</h5>}
+          scrollableTarget='message-panel'
+        >
+          {listMessages.map((msg, index) => {
+            return (
+              <Container key={index} style={{width: '120px'}} className={msg.sentUserId === localStorage.getItem('userId') ? 'bg-primary text-white rounded-2 p-1 mb-1 m-0 align-self-end' : 'bg-secondary text-white rounded-2 p-1 mb-1 align-self-start m-0'}>
+                {msg.content}
+              </Container>
+            )})
+          }
+        </InfiniteScroll>
       </Container>
       <Container className='p-0 d-flex'>
         <input value={message} onChange={e => setMessage(e.target.value)} type='text' className='form-control me-2' onKeyDown={e => {
           if(e.key === 'Enter') handleSendMessage();
         }} onFocus={handleMarkConversationAsRead}/>
-        <Button variant='primary' className='mt-2' onClick={handleSendMessage}>Gửi</Button>
+        <Image style={{height: '30px', cursor: 'pointer'}} src={send} onClick={handleSendMessage}/>
       </Container>
     </Container>
   )

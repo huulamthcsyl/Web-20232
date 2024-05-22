@@ -69,7 +69,7 @@ export default function Profile() {
       </Container>
       <Container className='d-flex mt-3' style={{ width: 1000, position: 'relative' }} fluid>
         <Image
-          className='border border-5 border-white rounded-circle'
+          className='border border-1 rounded-circle'
           src={profile.avatar}
           style={{ width: 200, height: 200, position: 'relative', top: -100, left: 30, objectFit: 'cover' }}
         />
