@@ -424,6 +424,7 @@ export const getPostByOffset = async (req, res) => {
     let q
     const postsRef = collection(db, "posts");
     if (lastVisibleId === undefined) {
+        // First time call
         const currentTimestamp = Timestamp.now()
         q = query(postsRef,
             where("isComment", "==", false),
@@ -431,7 +432,11 @@ export const getPostByOffset = async (req, res) => {
             startAt(currentTimestamp),
             limit(offset))
     } else {
-        const lastVisible = doc(db, "post", lastVisibleId)
+        // Later calls...
+        let lastVisible
+        await getDoc(doc(db, "posts", lastVisibleId)).then((doc) => {
+            lastVisible = doc
+        })
 
         q = query(collection(db, "posts"),
             where("isComment", "==", false),
@@ -445,19 +450,20 @@ export const getPostByOffset = async (req, res) => {
         docs.push({id: doc.id, data: doc.data()})
     })
 
-    const newLastVisibleId = docs[docs.length - 1].id
-    let hasMore = true
-    if (newLastVisibleId === lastVisibleId) {
-        hasMore = false
+    if (docs.length !== 0) {
+        lastVisibleId = docs[docs.length - 1].id
+        let hasMore = true
+        res.status(200).json({
+            posts: docs,
+            lastVisibleId: lastVisibleId,
+            hasMore: hasMore
+        })
+    } else {
+        // No more posts after lastVisible post
+        let hasMore = false
         res.status(200).json({
             posts: docs,
             hasMore: hasMore
         })
     }
-
-    res.status(200).json({
-        posts: docs,
-        lastVisibleId: lastVisibleId,
-        hasMore: hasMore
-    })
 }
