@@ -281,6 +281,26 @@ export const createFriendRequest = async (req, res) => {
     })
 }
 
+// GET /checkExistFriendRequest
+export const checkExistFriendRequest = async (req, res) => {
+  const friendRequest = {
+    sentUserId: req.body.userId,
+    receivedUserId: req.body.friendId,
+  };
+  let id = friendRequest.sentUserId + "-" + friendRequest.receivedUserId;
+  const friendRequestDoc = await getDoc(doc(db, "friendRequests", id));
+  if (friendRequestDoc.exists()) {
+    res.status(200).json({
+      status: true
+    })  
+  }
+  else {
+    res.status(200).json({
+      status: false
+    })
+  }
+}
+
 // POST /acceptFriendRequest
 export const acceptFriendRequest = async (req, res) => {
   try {
