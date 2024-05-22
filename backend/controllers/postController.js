@@ -1,14 +1,21 @@
 import {
     addDoc,
+    arrayRemove,
+    arrayUnion,
     collection,
+    deleteDoc,
     doc,
     getDoc,
     getDocs,
-    arrayUnion,
-    arrayRemove,
+    limit,
+    orderBy,
+    query,
+    setDoc,
+    startAfter,
+    startAt,
     Timestamp,
-    updateDoc, setDoc,
-    where, deleteDoc
+    updateDoc,
+    where
 } from "firebase/firestore"
 import {getDownloadURL, getStorage, ref, uploadBytes} from "firebase/storage"
 import Randomstring from "randomstring"
@@ -94,8 +101,7 @@ export const getPostByUserId = async (req, res) => {
         res.status(402).json({
             message: `No posts by user ${userId} found`,
         })
-    }
-    else res.status(200).json({
+    } else res.status(200).json({
         message: `Found posts by user ${userId}.`,
         data: posts
     })
@@ -112,8 +118,7 @@ export const getAllPost = async (req, res) => {
         res.status(402).json({
             message: "No post found!"
         })
-    }
-    else res.status(200).json({
+    } else res.status(200).json({
         message: "Found all posts",
         data: posts
     })
@@ -123,23 +128,23 @@ export const getPostByPostId = async (req, res) => {
     const postId = req.params.postId
 
     getDoc(doc(db, "posts", postId))
-    .then((doc) => {
-        if (doc.exists()) {
-            res.status(200).json({
-                message: `Found post with id ${postId}`,
-                data: doc.data()
-            })
-        } else {
-            res.status(404).json({
-                message: `No post with id ${postId} found`
-            })
-        }
-    })
-    .catch((error) => {
-        res.status(400).json({
-            message: error.message
+        .then((doc) => {
+            if (doc.exists()) {
+                res.status(200).json({
+                    message: `Found post with id ${postId}`,
+                    data: doc.data()
+                })
+            } else {
+                res.status(404).json({
+                    message: `No post with id ${postId} found`
+                })
+            }
         })
-    })
+        .catch((error) => {
+            res.status(400).json({
+                message: error.message
+            })
+        })
 }
 
 export const updatePost = async (req, res) => {
@@ -263,6 +268,7 @@ export const sharePost = async (req, res) => {
         })
     })
 }
+
 export const likePost = async (req) => {
     const userId = req.userId
     const postId = req.postId
@@ -270,28 +276,28 @@ export const likePost = async (req) => {
     try {
         const postRef = doc(db, "posts", postId)
         getDoc(postRef)
-        .then((doc) => {
-            if (doc.exists()) {
-                const liked_list = doc.data().likedList
-                if (liked_list.includes(userId)) {
-                    return {
-                        message: "User already liked this post"
+            .then((doc) => {
+                if (doc.exists()) {
+                    const liked_list = doc.data().likedList
+                    if (liked_list.includes(userId)) {
+                        return {
+                            message: "User already liked this post"
+                        }
+                    } else {
+                        updateDoc(postRef, {
+                            likedList: arrayUnion(userId)
+                        })
+
+                        return {
+                            message: `Post with id ${postId} liked by user ${userId}`
+                        }
                     }
                 } else {
-                    updateDoc(postRef, {
-                        likedList: arrayUnion(userId)
-                    })
-
                     return {
-                        message: `Post with id ${postId} liked by user ${userId}`
+                        message: `No post with id ${postId} found`
                     }
                 }
-            } else {
-                return {
-                    message: `No post with id ${postId} found`
-                }
-            }
-        })
+            })
     } catch (e) {
         console.log(e)
     }
@@ -378,17 +384,17 @@ export const createNotification = async (req) => {
         dateCreated: Timestamp.fromDate(new Date())
     }
     getDoc(notificationRef)
-    .then((doc) => {
-        if (doc.exists()) {
-            updateDoc(notificationRef, {
-                data: arrayUnion(newNotification)
-            })
-        } else {
-            setDoc(notificationRef, {
-                data: arrayUnion(newNotification)
-            })
-        }
-    })
+        .then((doc) => {
+            if (doc.exists()) {
+                updateDoc(notificationRef, {
+                    data: arrayUnion(newNotification)
+                })
+            } else {
+                setDoc(notificationRef, {
+                    data: arrayUnion(newNotification)
+                })
+            }
+        })
 }
 
 export const getNotificationByUserId = async (req, res) => {
@@ -400,5 +406,58 @@ export const getNotificationByUserId = async (req, res) => {
     res.status(200).json({
         message: `Found notifications for user ${userId}.`,
         data: notifications
+    })
+}
+
+export const getPostByOffset = async (req, res) => {
+    const offset = parseInt(req.query.offset)
+    let lastVisibleId = req.query.lastVisibleId
+    let docs = []
+
+    // Check invalid offset
+    if (offset === 0) {
+        res.status(400).json({
+            message: "Offset must be greater than 0"
+        })
+    }
+
+    let q
+    const postsRef = collection(db, "posts");
+    if (lastVisibleId === undefined) {
+        const currentTimestamp = Timestamp.now()
+        q = query(postsRef,
+            where("isComment", "==", false),
+            orderBy("dateCreated", 'desc'),
+            startAt(currentTimestamp),
+            limit(offset))
+    } else {
+        const lastVisible = doc(db, "post", lastVisibleId)
+
+        q = query(collection(db, "posts"),
+            where("isComment", "==", false),
+            orderBy("dateCreated", "desc"),
+            startAfter(lastVisible),
+            limit(offset))
+    }
+
+    const documentSnapshots = await getDocs(q);
+    documentSnapshots.forEach((doc) => {
+        docs.push({id: doc.id, data: doc.data()})
+    })
+
+    const newLastVisibleId = docs[docs.length - 1].id
+    let hasMore = true
+    if (newLastVisibleId === lastVisibleId) {
+        hasMore = false
+        res.status(200).json({
+            posts: docs,
+            hasMore: hasMore
+        })
+    }
+
+    res.status(200).json({
+        posts: docs,
+        lastVisibleId: lastVisibleId,
+        hasMore: hasMore
     })
 }
