@@ -419,11 +419,12 @@ export const getPostByOffset = async (req, res) => {
         res.status(400).json({
             message: "Offset must be greater than 0"
         })
+        return
     }
 
     let q
     const postsRef = collection(db, "posts");
-    if (lastVisibleId === undefined) {
+    if (lastVisibleId === "null") {
         // On the first call from client, req.query.lastVisibleId should be undefined.
         // This is default implementation.
         const currentTimestamp = Timestamp.now()

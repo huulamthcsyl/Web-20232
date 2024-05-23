@@ -33,6 +33,10 @@ export function getAllPost() {
     return axios.get(`${API_BASE_URL}/getAllPost`)
 }
 
+export function getPostByOffset(lastVisibleId, offset) {
+    return axios.get(`${API_BASE_URL}/getPostByOffset?lastVisibleId=${lastVisibleId}&offset=${offset}`)
+}
+
 export function getPostById(id) {
     return axios.get(`${API_BASE_URL}/getPostByPostId/${id}`)
 }
