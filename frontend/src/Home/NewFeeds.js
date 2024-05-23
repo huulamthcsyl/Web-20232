@@ -11,8 +11,10 @@ export default function NewFeeds() {
   const [posts, setPosts] = useState([])
   const [hasMore, setHasMore] = useState(true)
 
+  const NUMBER_OF_POSTS = 5
+
   const handleLoadMore = () => {
-    getPostByOffset(posts[posts.length - 1].id, 3)
+    getPostByOffset(posts[posts.length - 1].id, NUMBER_OF_POSTS)
       .then(res => {
         res.data.posts.forEach(doc => {
           setPosts(prev => [...prev, {id: doc.id, ...doc.data}])
@@ -25,7 +27,7 @@ export default function NewFeeds() {
   }
 
   useEffect(() => {
-    getPostByOffset(null, 3)
+    getPostByOffset(null, NUMBER_OF_POSTS)
       .then(res => {
         console.log(res.data)
         res.data.posts.forEach(doc => {
