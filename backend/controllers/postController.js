@@ -170,10 +170,13 @@ export const getPostByPostId = async (req, res) => {
 }
 
 export const updatePost = async (req, res) => {
-    const body = req.body.body
+    const body = req.body.body || ""
     const imageFile = req.files["image"] ? req.files["image"] : null
     const videoFile = req.files["video"] ? req.files["video"] : null
     const postId = req.params.postId;
+    const userId = req.params.userId;
+
+    console.log(req.body.body)
 
     const storage = getStorage();
     let imageStorageURL = []
@@ -198,39 +201,46 @@ export const updatePost = async (req, res) => {
 
     // Sau khi tất cả các promise đã được resolve thì thực hiện thêm dữ liệu vào firestore
     Promise.all(promises).then(() => {
-        let docSnap
-        const docRef = doc(db, "posts", postId)
-        getDoc(docRef).then((doc) => {
-            docSnap = doc.data()
-        })
-
-        // form-data
-        updateDoc(docRef, {
-            body: body,
-            image: imageStorageURL,
-            video: videoStorageURL,
-        }).then(() => {
-            res.status(200).json({
-                status: true,
-                message: "Cập nhật bài đăng thành công.",
-                post: {
-                    body: body,
-                    image: imageStorageURL,
-                    video: videoStorageURL,
-                    likedList: docSnap.likedList,
-                    comments: docSnap.comments,
-                    id: docRef.id,
-                    isComment: false,
-                    dateCreated: Timestamp.fromDate(new Date())
-                }
+        try {
+            let docSnap
+            const docRef = doc(db, "posts", postId)
+            getDoc(docRef).then((doc) => {
+                docSnap = doc.data()
             })
+
+            // form-data
+            updateDoc(docRef, {
+                body: body,
+                image: imageStorageURL,
+                video: videoStorageURL,
+            }).then(() => {
+                res.status(200).json({
+                    status: true,
+                    message: "Cập nhật bài đăng thành công.",
+                    post: {
+                        body: body,
+                        image: imageStorageURL,
+                        video: videoStorageURL,
+                        likedList: docSnap.likedList,
+                        comments: docSnap.comments,
+                        id: docRef.id,
+                        isComment: false,
+                        dateCreated: Timestamp.fromDate(new Date())
+                    }
+                })
+            })
+        } catch (e) {
+            console.log(e.message)
+            res.status(400).json({
+                message: "Error update file"
+            })
+        }
         }).catch((error) => {
             res.status(400).json({
                 status: false,
                 message: error.message
             })
         })
-    })
 }
 
 export const deletePost = async (req, res) => {

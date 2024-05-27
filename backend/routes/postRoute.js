@@ -23,7 +23,7 @@ router.post('/createPost', upload.fields([{name: 'image'}, {name: 'video'}]), cr
 router.get('/getAllPost', getAllPost)
 router.get('/getPostByUserId/:userId', getPostByUserId)
 router.get('/getPostByPostId/:postId', getPostByPostId)
-router.post('/updatePost/:postId', updatePost)
+router.post('/updatePost/:userId/:postId', upload.fields([{name: 'image'}, {name: 'video'}]), updatePost)
 router.post('/deletePost/:postId', deletePost)
 router.post('/sharePost/:userId/:postId', sharePost)
 router.get('/getCommentByPostId/:postId', getCommentByPostId)
