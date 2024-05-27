@@ -9,7 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 export default function NewFeeds() {
 
   const [posts, setPosts] = useState([])
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMore, setHasMore] = useState(false)
 
   const NUMBER_OF_POSTS = 5
 
@@ -29,7 +29,6 @@ export default function NewFeeds() {
   useEffect(() => {
     getPostByOffset(null, NUMBER_OF_POSTS)
       .then(res => {
-        console.log(res.data)
         res.data.posts.forEach(doc => {
           setPosts(prev => [...prev, {id: doc.id, ...doc.data}])
         })

@@ -241,12 +241,6 @@ export const sharePost = async (req, res) => {
         isComment: false,
         dateCreated: Timestamp.fromDate(new Date())
     }).then(async (docRef) => {
-        let sharedPost
-        const sharedPostRef = doc(db, "posts", sharedPostId)
-        await getDoc(sharedPostRef).then((doc) => {
-            sharedPost = doc.data()
-        })
-
         res.status(200).json({
             status: true,
             message: "Chia sẻ bài đăng thành công.",
@@ -256,7 +250,7 @@ export const sharePost = async (req, res) => {
                 likedList: [],
                 comments: [],
                 id: docRef.id,
-                sharedPost: sharedPost,
+                sharedPostId: sharedPostId,
                 isComment: false,
                 dateCreated: Timestamp.fromDate(new Date())
             }
@@ -375,6 +369,7 @@ export const getCommentByPostId = async (req, res) => {
 
 export const createNotification = async (req) => {
     const notificationRef = doc(db, "notifications", req.postUserId)
+    if (req.userId === req.postUserId) return
     const newNotification = {
         sentUsername: req.sentUsername,
         userId: req.userId,
