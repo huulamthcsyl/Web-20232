@@ -14,13 +14,7 @@ export default function CommentSection({ postUserId, postId }) {
     getCommentByPostId(postId)
       .then(res => {
         res.data.data.forEach(doc => {
-          getPostById(doc)
-            .then(res => {
-              setComments(prev => [...prev, { post: { ...res.data.data, id: doc } }])
-            })
-            .catch(error => {
-              console.log(error)
-            })
+          setComments(prev => [...prev, { post: { ...doc, id: doc.postId } }])
         })
       })
       .catch(error => {
