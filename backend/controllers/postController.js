@@ -88,63 +88,85 @@ export const getPostByUserId = async (req, res) => {
     const userId = req.params.userId
     let posts = []
 
-    const querySnapshot =
-        await getDocs(collection(db, "posts"))
+    try {
+        const querySnapshot =
+            await getDocs(collection(db, "posts"))
 
-    querySnapshot.forEach((doc) => {
-        if (doc.data().userId === userId && !doc.data().isComment) {
-            posts.push({id: doc.id, data: doc.data()})
-        }
-    })
-
-    if (posts.length === 0) {
-        res.status(402).json({
-            message: `No posts by user ${userId} found`,
+        querySnapshot.forEach((doc) => {
+            if (doc.data().userId === userId && !doc.data().isComment) {
+                posts.push({id: doc.id, data: doc.data()})
+            }
         })
-    } else res.status(200).json({
-        message: `Found posts by user ${userId}.`,
-        data: posts
-    })
+
+        if (posts.length === 0) {
+            res.status(402).json({
+                message: `No posts by user ${userId} found`,
+            })
+        } else res.status(200).json({
+            message: `Found posts by user ${userId}.`,
+            data: posts
+        })
+    } catch (e) {
+        console.log(e.message)
+        res.status(400).json({
+            message: e.message
+        })
+    }
 }
 
 export const getAllPost = async (req, res) => {
     let posts = []
-    const querySnapshot = await getDocs(collection(db, "posts"))
-    querySnapshot.forEach((doc) => {
-        if (!doc.data().isComment) posts.push({id: doc.id, data: doc.data()})
-    })
 
-    if (querySnapshot.empty) {
-        res.status(402).json({
-            message: "No post found!"
+    try {
+        const querySnapshot = await getDocs(collection(db, "posts"))
+        querySnapshot.forEach((doc) => {
+            if (!doc.data().isComment) posts.push({id: doc.id, data: doc.data()})
         })
-    } else res.status(200).json({
-        message: "Found all posts",
-        data: posts
-    })
+
+        if (querySnapshot.empty) {
+            res.status(402).json({
+                message: "No post found!"
+            })
+        } else res.status(200).json({
+            message: "Found all posts",
+            data: posts
+        })
+    } catch (e) {
+        console.log(e.message)
+        res.status(400).json({
+            message: e.message
+        })
+    }
 }
 
 export const getPostByPostId = async (req, res) => {
     const postId = req.params.postId
 
-    getDoc(doc(db, "posts", postId))
-        .then((doc) => {
-            if (doc.exists()) {
-                res.status(200).json({
-                    message: `Found post with id ${postId}`,
-                    data: doc.data()
-                })
-            } else {
-                res.status(404).json({
-                    message: `No post with id ${postId} found`
-                })
-            }
-        })
-        .catch((error) => {
-            res.status(400).json({
-                message: error.message
+    try {
+        getDoc(doc(db, "posts", postId))
+            .then((doc) => {
+                if (doc.exists()) {
+                    res.status(200).json({
+                        message: `Found post with id ${postId}`,
+                        data: doc.data()
+                    })
+                } else {
+                    res.status(404).json({
+                        message: `No post with id ${postId} found`
+                    })
+                }
             })
+            .catch((error) => {
+                res.status(400).json({
+                    message: error.message
+                })
+            })
+    } catch (e) {
+        console.log(e.message)
+        res.status(400).json({
+            message: e.message
         })
+    }
 }
 
 export const updatePost = async (req, res) => {
@@ -213,9 +235,10 @@ export const updatePost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
     const postId = req.params.postId
-    const postRef = doc(db, "posts", postId)
 
     try {
+        const postRef = doc(db, "posts", postId)
+
         await deleteDoc(postRef)
         res.status(200).json({
             message: `Post with id ${postId} deleted`
@@ -230,7 +253,7 @@ export const deletePost = async (req, res) => {
 export const sharePost = async (req, res) => {
     const sharedPostId = req.params.postId
     const body = req.body.body
-    const userId = req.body.userId
+    const userId = req.params.userId
 
     addDoc(collection(db, "posts"), {
         body: body,
@@ -364,13 +387,34 @@ export const createComment = async (req) => {
 export const getCommentByPostId = async (req, res) => {
     const postId = req.params.postId
 
-    const postRef = doc(db, "posts", postId)
-    const comments = (await getDoc(postRef)).data().comments
+    try {
+        const postRef = doc(db, "posts", postId)
+        const docSnap = await getDoc(postRef)
 
-    res.status(200).json({
-        message: `Found comments for post ${postId}.`,
-        data: comments
-    })
+        const commentIds = docSnap.data().comments
+
+        let commentRef
+        let commentSnap
+        let comments = []
+        for (let commentId of commentIds) {
+            commentRef = doc(db, "posts", commentId)
+            commentSnap = await getDoc(commentRef)
+
+            if (commentSnap.exists()) {
+                comments.push(commentSnap.data())
+            }
+        }
+
+        res.status(200).json({
+            message: `Found comments for post ${postId}.`,
+            data: comments
+        })
+    } catch (e) {
+        console.log(e.message)
+        res.status(400).json({
+            message: e.message
+        })
+    }
 }
 
 export const createNotification = async (req) => {
