@@ -181,6 +181,7 @@ export const updatePost = async (req, res) => {
     }
 
     console.log(body)
+    console.log(imageFile)
 
     const storage = getStorage();
     let imageStorageURL = []
@@ -267,7 +268,7 @@ export const deletePost = async (req, res) => {
 export const sharePost = async (req, res) => {
     const sharedPostId = req.params.postId
     const body = req.body.body
-    const userId = req.params.userId
+    const userId = req.body.userId
 
     addDoc(collection(db, "posts"), {
         body: body,
