@@ -29,6 +29,10 @@ export function createPost(data) {
     return axios.post(`${API_BASE_URL}/createPost`, data)
 }
 
+export function sharePost(postId, data) {
+    return axios.post(`${API_BASE_URL}/sharePost/${postId}`, data)
+}
+
 export function getAllPost() {
     return axios.get(`${API_BASE_URL}/getAllPost`)
 }

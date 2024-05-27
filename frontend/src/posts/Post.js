@@ -4,9 +4,12 @@ import heart_red from '../assets/icons/heart_red.png'
 import heart from '../assets/icons/heart.png'
 import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
-import { getProfileByUserId, removeLikePost } from '../services/API'
+import { getProfileByUserId, removeLikePost, sharePost, getPostById } from '../services/API'
 import { Link } from 'react-router-dom'
 import { socket } from '../socket'
+import { toast } from 'react-toastify'
+import SharedPostCard from '../components/SharedPostCard'
+import SharePostModal from '../components/SharePostModal'
 
 export default function Post({ post }) {
 
@@ -16,6 +19,7 @@ export default function Post({ post }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
+  const [openShare, setOpenShare] = useState(false);
 
   useEffect(() => {
     getProfileByUserId(post.userId)
@@ -48,6 +52,10 @@ export default function Post({ post }) {
     }
   }
 
+  const handleSharePost = () => {
+    setOpenShare(true)
+  }
+
   return (
     <Card className='mb-2'>
       <Card.Header>
@@ -76,12 +84,13 @@ export default function Post({ post }) {
             ))}
           </Container>
           {post.video && <video className='border' src={post.video} controls width="100%" />}
+          {post.sharedPostId && <SharedPostCard postId={post.sharedPostId}/> }
         </Card.Body>
       </Link>
       <Card.Footer>
         <Container className='d-flex justify-content-between'>
           <Col className='d-flex'>
-            <Image className='me-2' src={isLiked ? heart_red : heart} onClick={handleClickLike} />
+            <Image className='me-2' style={{cursor: 'pointer'}} src={isLiked ? heart_red : heart} onClick={handleClickLike} />
             <p className='align-self-center m-0'>{likeCount} lượt thích</p>
           </Col>
           <Col className='d-flex'>
@@ -89,10 +98,11 @@ export default function Post({ post }) {
             <p className='align-self-center m-0'>{commentCount} bình luận</p>
           </Col>
           <Col className='d-flex'>
-            <Image className='me-2' src={share} />
+            <Image className='me-2' style={{cursor: 'pointer'}} src={share} onClick={handleSharePost}/>
             <p className='align-self-center m-0'>Chia sẻ</p>
           </Col>
         </Container>
+        <SharePostModal show={openShare} handleClose={() => setOpenShare(false)} postId={post.id} />
       </Card.Footer>
     </Card>
   )

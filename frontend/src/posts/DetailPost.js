@@ -9,6 +9,8 @@ import comment from '../assets/icons/comment.png'
 import share from '../assets/icons/share.png'
 import CommentSection from '../components/CommentSection';
 import ImageSlideShow from './ImageSlideShow';
+import SharedPostCard from '../components/SharedPostCard';
+import SharePostModal from '../components/SharePostModal';
 
 export default function DetailPost() {
 
@@ -20,6 +22,7 @@ export default function DetailPost() {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
+  const [openShare, setOpenShare] = useState(false);
 
   let getUserInfo = (post) => {
     getProfileByUserId(post.userId)
@@ -47,6 +50,10 @@ export default function DetailPost() {
       })
       setLikeCount(likeCount => likeCount + 1);
     }
+  }
+
+  const handleSharePost = () => {
+    setOpenShare(true)
   }
 
   useEffect(() => {
@@ -87,6 +94,7 @@ export default function DetailPost() {
           </Card.Text>
           {post.image && post.image.length > 0 && <ImageSlideShow images={post.image} />}
           {post.video && <video className='border' src={post.video} controls width="100%" />}
+          {post.sharedPostId && <SharedPostCard postId={post.sharedPostId} />}
         </Card.Body>
         <Card.Footer>
           <Container className='d-flex justify-content-between'>
@@ -95,14 +103,15 @@ export default function DetailPost() {
               <p className='align-self-center m-0'>{likeCount} lượt thích</p>
             </Col>
             <Col className='d-flex'>
-            <Image className='me-2' src={comment} />
+              <Image className='me-2' src={comment} />
               <p className='align-self-center m-0'>{commentCount} bình luận</p>
             </Col>
             <Col className='d-flex'>
-            <Image className='me-2' src={share} />
+              <Image className='me-2' style={{cursor: 'pointer'}} src={share} onClick={handleSharePost}/>
               <p className='align-self-center m-0'>Chia sẻ</p>
             </Col>
           </Container>
+          <SharePostModal show={openShare} handleClose={() => setOpenShare(false)} postId={id} />
         </Card.Footer>
       </Card>
       <CommentSection postId={id} postUserId={post.userId}/>
