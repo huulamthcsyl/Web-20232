@@ -85,7 +85,7 @@ export default function DetailPost() {
           <Card.Text>
             {post.body}
           </Card.Text>
-          {post.image && <ImageSlideShow images={post.image} />}
+          {post.image && post.image.length > 0 && <ImageSlideShow images={post.image} />}
           {post.video && <video className='border' src={post.video} controls width="100%" />}
         </Card.Body>
         <Card.Footer>

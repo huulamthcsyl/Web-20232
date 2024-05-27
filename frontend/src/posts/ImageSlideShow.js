@@ -22,11 +22,11 @@ export default function ImageSlideShow({ images }) {
         <Image style={{ width: '30px' }} src={backIcon} />
       </Button>
       <Link to={`image`} state={{imagePosition: imagePosition}}>
-        <Image className='object-fit-scale me-2' src={images[imagePosition]} style={{ maxHeight: '50vh', maxWidth: '90%' }} />
+        <Image className='object-fit-scale me-2' src={images[imagePosition]} style={{ maxHeight: '50vh', maxWidth: '40%' }} />
       </Link>
       {imagePosition + 1 < images.length && 
       <Link to={`image`} state={{imagePosition: imagePosition + 1}}>
-        <Image className='object-fit-scale' src={images[imagePosition + 1]} style={{ maxHeight: '50vh', maxWidth: '90%' }} />
+        <Image className='object-fit-scale' src={images[imagePosition + 1]} style={{ maxHeight: '50vh', maxWidth: '40%' }} />
       </Link>
       }
       <Button className='p-0 border-0 align-self-center me-2 ms-2' style={{ width: '30px', background: 'black' }} onClick={handleNextImage}>
