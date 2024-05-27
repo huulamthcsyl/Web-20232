@@ -170,13 +170,17 @@ export const getPostByPostId = async (req, res) => {
 }
 
 export const updatePost = async (req, res) => {
-    const body = req.body.body || ""
+    let body = req.body.body
     const imageFile = req.files["image"] ? req.files["image"] : null
     const videoFile = req.files["video"] ? req.files["video"] : null
     const postId = req.params.postId;
     const userId = req.params.userId;
 
-    console.log(req.body.body)
+    if (body === undefined || body === null) {
+        body = ""
+    }
+
+    console.log(body)
 
     const storage = getStorage();
     let imageStorageURL = []
