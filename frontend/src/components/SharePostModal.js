@@ -56,6 +56,7 @@ export default function SharePostModal({ show, handleClose, postId }) {
                 <Image key={index} src={image} style={{ maxWidth: '300px' }} className='me-3 border' />
               ))}
             </Container>
+            {post?.video && <video className='border' src={post.video} controls width="100%" />}
           </Card.Body>
         </Card>
       </Modal.Body>
