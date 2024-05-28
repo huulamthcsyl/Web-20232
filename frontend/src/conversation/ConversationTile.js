@@ -41,7 +41,7 @@ export function ConversationTile({ conversation, conversations, setConversations
       <img src={userProfile?.avatar} alt={userProfile?.username} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
       <Container className='d-flex'>
         <Container className='p-0'>
-          <h5>{conversation.lastMessage.sentUsername}</h5>
+          <h5>{userProfile.firstName + " " +  userProfile.lastName}</h5>
           <Container className='d-flex p-0'>
             <p className='me-1'>{conversation.lastMessage.sentUserId == localStorage.getItem('userId') ? "Bạn:" : `${conversation.lastMessage.sentUsername}:`}</p>
             <p>{conversation.lastMessage.content}</p>
